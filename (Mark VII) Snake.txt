@@ -1,0 +1,457 @@
+#include<iostream.h>
+#include<stdio.h>
+#include<windows.h>
+#include<ctime>
+#include<conio.h>
+#include<stdio.h>
+//=======================================================================================================================================================
+const int boardHigh=20;
+const int boardWidth=50;
+const int KEY_LEFT = VK_LEFT;
+const int KEY_RIGHT = VK_RIGHT;
+const int KEY_UP = VK_UP;
+const int KEY_DOWN = VK_DOWN;
+const int KEY_ESC = VK_ESCAPE;
+//=======================================================================================================================================================
+double tickCount;
+bool endGame;
+int tickSpeed;
+//=======================================================================================================================================================
+void introduce();
+void mainscreen();
+void howtoplay();
+void gameplay();
+//======================================================================================================================================================
+struct Body 
+{
+    int x; int y;
+    int ox; int oy;
+};
+//======================================================================================================================================================
+Body snake[100]; int snakeLength;
+Body direction;
+Body food;
+//======================================================================================================================================================
+void gotoxy(int x,int y)
+{
+    HANDLE hConsoleOutput;
+    COORD Cursor_an_Pos = { x,y};
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(hConsoleOutput , Cursor_an_Pos);
+}
+//======================================================================================================================================================
+void SetColor(WORD color)
+{
+    HANDLE hConsoleOutput;
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+ 
+    CONSOLE_SCREEN_BUFFER_INFO screen_buffer_info;
+    GetConsoleScreenBufferInfo(hConsoleOutput, &screen_buffer_info);
+ 
+    WORD wAttributes = screen_buffer_info.wAttributes;
+    color &= 0x000f;
+    wAttributes &= 0xfff0;
+    wAttributes |= color;
+ 
+    SetConsoleTextAttribute(hConsoleOutput, wAttributes);
+}
+//======================================================================================================================================================
+void SetScreenColor(WORD color)
+{
+    HANDLE hConsoleOutput;
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+ 
+    CONSOLE_SCREEN_BUFFER_INFO screen_buffer_info;
+    GetConsoleScreenBufferInfo(hConsoleOutput, &screen_buffer_info);
+ 
+    WORD wAttributes = screen_buffer_info.wAttributes;
+    color &= 0x000f;
+    color <<= 4;
+    wAttributes &= 0xff0f;
+    wAttributes |= color;
+ 
+    SetConsoleTextAttribute(hConsoleOutput, wAttributes);
+}
+//======================================================================================================================================================
+BOOL NT_SetConsoleDisplayMode(HANDLE hOutputHandle, DWORD dwNewMode)//Full screen
+{
+    typedef BOOL (WINAPI *SCDMProc_t) (HANDLE, DWORD, LPDWORD);
+    SCDMProc_t SetConsoleDisplayMode;
+    HMODULE hKernel32;
+    BOOL bFreeLib = FALSE, ret;
+    const char KERNEL32_NAME[] = "kernel32.dll";
+    hKernel32 = GetModuleHandleA(KERNEL32_NAME);
+    if (hKernel32==NULL)
+    {
+        hKernel32=LoadLibraryA(KERNEL32_NAME);
+        if (hKernel32==NULL)
+            return FALSE;
+ 
+        bFreeLib=true;
+    }
+ 
+    SetConsoleDisplayMode = (SCDMProc_t)GetProcAddress(hKernel32, "SetConsoleDisplayMode");
+    if (SetConsoleDisplayMode == NULL)
+    {
+        SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
+        ret = FALSE;
+    }
+    else
+    {
+        DWORD tmp;
+        ret = SetConsoleDisplayMode(hOutputHandle, dwNewMode, &tmp);
+    }
+    if (bFreeLib)
+        FreeLibrary(hKernel32);
+ 
+    return ret;
+}
+ //======================================================================================================================================================
+void setFullScreen()
+{
+    NT_SetConsoleDisplayMode( GetStdHandle( STD_OUTPUT_HANDLE ), 1 );
+}
+//======================================================================================================================================================
+void exitFullScreen()
+{
+    NT_SetConsoleDisplayMode( GetStdHandle( STD_OUTPUT_HANDLE ), 0 );
+}
+//======================================================================================================================================================
+// ?n hi?n con tr? nh?p nháy trong c?a s? Console
+void ShowCur(bool CursorVisibility)
+{
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursor = {1, CursorVisibility};
+    SetConsoleCursorInfo(handle, &cursor);
+}
+//======================================================================================================================================================
+bool checkKey(int key)
+{
+    return GetAsyncKeyState(key);
+}
+//======================================================================================================================================================
+void resetTick()
+{
+    tickCount=0;
+}
+//======================================================================================================================================================
+void tickCounts()
+{
+    tickCount+=0.1;
+}
+//======================================================================================================================================================
+double getTickCount()
+{
+    return tickCount;
+}
+//======================================================================================================================================================
+void Tick(double maxValue, void (&gameloop)(), void (&drawloop)())
+{
+    tickCounts();
+        if(getTickCount()>maxValue){ 
+            resetTick();
+            gameloop(); // Game loop
+        }
+    drawloop(); // Render loop
+}
+//======================================================================================================================================================
+void begin() 
+{
+    endGame=false;
+    tickSpeed=70;
+    snake[0].x=5;snake[0].y=5;
+    snake[1].x=4;snake[1].y=5;
+	snake[2].x=3;snake[2].y=5;
+    snakeLength=3;
+    direction.x=0;direction.y=1;
+    SetScreenColor(8);
+    for(int i=0;i<boardWidth;i++){
+        for(int j=0;j<boardHigh;j++) {
+            gotoxy(i,j);
+            printf(" ");
+        }
+    }
+    SetColor(14);
+    food.x=25;food.y=10;
+}
+//======================================================================================================================================================
+void moveSnake(Body dir) 
+{
+    for(int i=0;i<snakeLength;i++) {
+        if(i==0){
+            snake[0].ox=snake[0].x;snake[0].oy=snake[0].y;
+            snake[0].x+=dir.x;snake[0].y+=dir.y;
+        }
+		else{
+            snake[i].ox=snake[i].x;snake[i].oy=snake[i].y;
+            snake[i].x=snake[i-1].ox;snake[i].y=snake[i-1].oy;
+		}
+        if(i!=0&&(snake[0].x==snake[i].x&&snake[0].y==snake[i].y)) endGame = true;
+    }
+    if(snake[0].x>=boardWidth) snake[0].x=0;
+    if(snake[0].x<0) snake[0].x=boardWidth-1;
+    if(snake[0].y>=boardHigh) snake[0].y=0;
+    if(snake[0].y<0) snake[0].y=boardHigh-1;
+    if(snake[0].x==food.x&&snake[0].y==food.y) {
+        snake[snakeLength].x=snake[snakeLength-1].ox; 
+		snake[snakeLength].y=snake[snakeLength - 1].oy;
+        snakeLength++;
+        food.x=rand()%boardWidth; 
+        food.y=rand()%boardHigh;
+        if (tickSpeed > 5)
+            tickSpeed -= 5;
+    }
+}
+//=======================================================================================================================================================
+void moveSnake1(Body dir) 
+{
+    for(int i=0;i<snakeLength;i++) {
+        if(i==0){
+            snake[0].ox=snake[0].x;snake[0].oy=snake[0].y;
+            snake[0].x+=dir.x;snake[0].y+=dir.y;
+        }
+		else{
+            snake[i].ox=snake[i].x;snake[i].oy=snake[i].y;
+            snake[i].x=snake[i-1].ox;snake[i].y=snake[i-1].oy;
+		}
+        if(i!=0&&(snake[0].x==snake[i].x&&snake[0].y==snake[i].y)||snake[0].x==boardWidth-1||snake[0].y==boardHigh-1||snake[0].x==0||snake[0].y==0) endGame = true;
+    }
+    if(snake[0].x>=boardWidth) snake[0].x=0;
+    if(snake[0].x<0) snake[0].x=boardWidth-1;
+    if(snake[0].y>=boardHigh) snake[0].y=0;
+    if(snake[0].y<0) snake[0].y=boardHigh-1;
+    if(snake[0].x==food.x&&snake[0].y==food.y) {
+        snake[snakeLength].x=snake[snakeLength-1].ox; 
+        snake[snakeLength].y=snake[snakeLength - 1].oy;
+        snakeLength++;
+        food.x=rand()%boardWidth; 
+        food.y=rand()%boardHigh;
+        if (tickSpeed > 5)
+            tickSpeed -= 5;
+    }
+}
+//======================================================================================================================================================
+void drawFood() 
+{
+    SetColor(12);
+    gotoxy(food.x, food.y);
+    printf("%c",2);
+}
+//======================================================================================================================================================
+void drawSnake() 
+{
+    SetColor(14);
+	gotoxy(snake[0].x,snake[0].y); printf("%c",2);
+    for (int i=1;i<snakeLength;i++) {
+        gotoxy(snake[i].x,snake[i].y);
+        printf("%c", 1); 
+    }
+    gotoxy(snake[snakeLength-1].ox, snake[snakeLength-1].oy);
+    printf(" "); 
+}
+//======================================================================================================================================================
+void mainloop() 
+{
+    moveSnake(direction);
+    if(checkKey(KEY_LEFT)){
+        if(direction.x!=1){
+            direction.x=-1;direction.y=0;
+        }
+    }
+    else if(checkKey(KEY_RIGHT)){
+        if(direction.x!=-1) {
+            direction.x=1; direction.y=0;
+        }
+    }
+    else if(checkKey(KEY_UP)){ 
+        if (direction.y!=1) {
+            direction.y=-1; direction.x = 0;
+        }
+    }
+    else if(checkKey(KEY_DOWN)){
+        if(direction.y!=-1){
+            direction.y=1;direction.x=0;
+        }
+    }
+    if (checkKey(KEY_ESC)){
+        endGame=true;
+    }
+}
+//======================================================================================================================================================
+void mainloop1() 
+{
+    moveSnake1(direction);
+    if(checkKey(KEY_LEFT)){
+        if(direction.x!=1){
+            direction.x=-1;direction.y=0;
+        }
+    }
+    else if(checkKey(KEY_RIGHT)){
+        if(direction.x!=-1) {
+            direction.x=1; direction.y=0;
+        }
+    }
+    else if(checkKey(KEY_UP)){ 
+        if (direction.y!=1) {
+            direction.y=-1; direction.x = 0;
+        }
+    }
+    else if(checkKey(KEY_DOWN)){
+        if(direction.y!=-1){
+            direction.y=1;direction.x=0;
+        }
+    }
+    if (checkKey(KEY_ESC)){
+        endGame=true;
+    }
+}
+//======================================================================================================================================================
+void drawgame() 
+{
+    drawFood();
+    drawSnake();
+    SetColor(10);
+    gotoxy(0, 0);
+    printf("Diem: %d", snakeLength*100);
+	cout<<endl;
+	printf("Press ESC to exit");
+}
+//======================================================================================================================================================
+void tradionmode()
+{
+	begin();
+    ShowCur(false);
+    while(!endGame){
+        Tick(tickSpeed, mainloop, drawgame);
+    }
+	SetScreenColor(0);
+	system("cls");
+	SetColor(12);
+	printf("Game Over !!!");
+	cout<<endl;
+	system("pause");
+}
+//======================================================================================================================================================
+void advancedmode()
+{
+	begin();
+	ShowCur(false);
+	while(!endGame){
+        Tick(tickSpeed, mainloop1, drawgame);
+    }
+	SetScreenColor(0);
+	system("cls");
+	SetColor(12);
+	printf("Game Over !!!");
+	cout<<endl;
+	system("pause");
+}
+//=======================================================================================================================================================
+void gameplay()
+{
+	system("cls");
+	SetColor(10);
+	cout<<" Please select Game Mode"<<endl; Sleep(50);
+	SetColor(14);
+	cout<<"   1. Tradition Mode"<<endl; Sleep(50);
+	SetColor(13);
+	cout<<"   2. Advanced Mode"<<endl; Sleep(50);
+	SetColor(12);
+	cout<<"   3. Exit"<<endl; Sleep(50);
+	char nhap;
+	nhap=getch();
+	while(!(nhap=='1' || nhap=='2' || nhap =='3'))
+		nhap=getch();
+	if(nhap=='1'){
+		system("cls");
+		tradionmode();
+	}
+	else if(nhap=='2'){
+		system("cls");
+		advancedmode();
+	}
+}
+//=======================================================================================================================================================
+void howtoplay()//luat choi
+{
+	system("cls");
+	system("color c");
+	cout<<"		Use 4 arrow keys to go Left, Up, Right, Down"<<endl; Sleep(50);
+	cout<<"		              Press ESC to exit"<<endl; Sleep(50);
+	cout<<"		There are 2 diffents gameplay mode for you to choose"<<endl; Sleep(50);
+	cout<<"			1. Traditional mode"<<endl; Sleep(50);
+	cout<<"			2. Advanced mode"<<endl; Sleep(50);
+	cout<<"		==========================================="<<endl; Sleep(50);
+	cout<<"		    Press 1 to go back to the maincreen"<<endl; Sleep(50);
+	cout<<"		         Press any key to exit"<<endl; Sleep(50);
+	char nhap; 
+	nhap=getch();
+	if(nhap=='1'){
+		system("cls");
+		mainscreen();
+	}
+	else{
+		system("cls");
+		exit(0);
+	}
+}
+//=======================================================================================================================================================
+void introduce()// gioi thieu
+{
+	system("color e");
+	system("cls");
+	cout<<"		Developed by DEV - C Archius Vuong"<<endl; Sleep(50);
+	cout<<"				 17110313"<<endl; Sleep(50);
+	cout<<"		===================================="<<endl; Sleep(50);
+	cout<<"		Press 1 to go back to the main screen"<<endl; Sleep(50);
+	cout<<"		        Press any key to exit"<<endl; Sleep(50);
+	char nhap;
+	nhap=getch();
+	if(nhap=='1'){
+		system("cls");
+		mainscreen();
+	}
+	else{
+		system("cls");
+		exit(0);
+	}
+}
+//=======================================================================================================================================================
+void mainscreen()
+{
+	SetColor(10);
+	cout<<"	 Snake Game "<<endl; Sleep(50);
+	SetColor(11);
+	cout<<"	1. Introduce"<<endl; Sleep(50);
+	SetColor(14);
+	cout<<"	2. How to play"<<endl; Sleep(50);
+	SetColor(15);
+	cout<<"	3. Gameplay"<<endl; Sleep(50);
+	SetColor(12);
+	cout<<"	4. Exit"<<endl; Sleep(50);
+	char nhap;
+	nhap=getch();
+	while(!(nhap=='1' || nhap=='2' || nhap =='3' || nhap=='4')){
+		nhap=getch();
+	}
+	if(nhap=='1'){
+		system("cls");
+		introduce();
+	}
+	else if(nhap=='2'){
+		system("cls");
+		howtoplay();
+	}
+	else if(nhap=='3'){
+		system("cls");
+		gameplay();
+	}
+	else
+		exit(0);
+}
+//=======================================================================================================================================================
+void main()
+{
+	srand(time(NULL));
+	mainscreen();
+}

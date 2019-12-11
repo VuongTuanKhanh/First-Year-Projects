@@ -1,0 +1,2013 @@
+#include<iostream.h>
+#include<stdio.h>
+#include<cstdlib>
+#include<windows.h>
+#include<conio.h>
+//=================================================================================================================================================================
+const int size=17;
+const int blank=0;
+//=================================================================================================================================================================
+int A[size][size];
+int i,j;
+int x,y;
+//=================================================================================================================================================================
+void mainscreen();
+void introduce();
+void howtoplay();
+void gameplay();
+void newgame();
+//=================================================================================================================================================================
+bool checkdraw()
+{
+	int dem=0;
+	for(int i=0;i<=size;i++)
+		for(int j=0;j<size;j++)
+			if(A[i][j]==1||A[i][j]==2)	dem++;
+	if(dem==286)	return true;
+	else return false;
+}
+//=================================================================================================================================================================
+bool checkwin(int row,int col)
+{
+	for(row=0;row<size;row++){
+		for(col=0;col<size;col++){
+			if(A[row][col]!=blank && A[row][col]==A[row][col+1] && A[row][col]==A[row][col+2] && A[row][col]==A[row][col+3] && A[row][col]==A[row][col+4])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row][col-1] && A[row][col]==A[row][col+1] && A[row][col]==A[row][col+2] && A[row][col]==A[row][col+3])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row][col-2] && A[row][col]==A[row][col-1] && A[row][col]==A[row][col+1] && A[row][col]==A[row][col+2])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row][col-3] && A[row][col]==A[row][col-2] && A[row][col]==A[row][col-1] && A[row][col]==A[row][col+1])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row][col-4] && A[row][col]==A[row][col-3] && A[row][col]==A[row][col-2] && A[row][col]==A[row][col-1])
+				return false;
+
+			else if(A[row][col]!=blank && A[row][col]==A[row+1][col] && A[row][col]==A[row+2][col] && A[row][col]==A[row+3][col] && A[row][col]==A[row+4][col])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row-1][col] && A[row][col]==A[row+1][col] && A[row][col]==A[row+2][col] && A[row][col]==A[row+3][col])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row-2][col] && A[row][col]==A[row-1][col] && A[row][col]==A[row+1][col] && A[row][col]==A[row+2][col])
+				return true;
+			else if(A[row][col]!=blank && A[row][col]==A[row-3][col] && A[row][col]==A[row-2][col] && A[row][col]==A[row-1][col] && A[row][col]==A[row+1][col])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row-4][col] && A[row][col]==A[row-3][col] && A[row][col]==A[row-2][col] && A[row][col]==A[row-1][col])
+				return false;
+
+			else if(A[row][col]!=blank && A[row][col]==A[row+1][col+1] && A[row][col]==A[row+2][col+2] && A[row][col]==A[row+3][col+3] && A[row][col]==A[row+4][col+4])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row-1][col-1] && A[row][col]==A[row+1][col+1] && A[row][col]==A[row+2][col+2] && A[row][col]==A[row+3][col+3])
+				return true;
+			else if(A[row][col]!=blank && A[row][col]==A[row-2][col-2] && A[row][col]==A[row-1][col-1] && A[row][col]==A[row+1][col+1] && A[row][col]==A[row+2][col+2])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row-3][col-3] && A[row][col]==A[row-2][col-2] && A[row][col]==A[row-1][col-1] && A[row][col]==A[row+2][col+2])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row-4][col-4] && A[row][col]==A[row-3][col-3] && A[row][col]==A[row-2][col-2] && A[row][col]==A[row-1][col-1])
+				return false;
+
+			else if(A[row][col]!=blank && A[row][col]==A[row-1][col+1] && A[row][col]==A[row-2][col+2] && A[row][col]==A[row-3][col+3] && A[row][col]==A[row-4][col+4])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row+1][col-1] && A[row][col]==A[row-1][col+1] && A[row][col]==A[row-2][col+2] && A[row][col]==A[row-3][col+3])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row+2][col-2] && A[row][col]==A[row+1][col-1] && A[row][col]==A[row-1][col+1] && A[row][col]==A[row-2][col+2])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row+3][col-3] && A[row][col]==A[row+2][col-2] && A[row][col]==A[row+1][col-1] && A[row][col]==A[row-1][col+1])
+				return false;
+			else if(A[row][col]!=blank && A[row][col]==A[row+4][col-4] && A[row][col]==A[row+3][col-3] && A[row][col]==A[row+2][col-2] && A[row][col]==A[row+1][col-1])
+				return false;
+		}
+	}
+	return true;
+}
+//=================================================================================================================================================================
+BOOL NT_SetConsoleDisplayMode(HANDLE hOutputHandle, DWORD dwNewMode)//Full screen
+{
+    typedef BOOL (WINAPI *SCDMProc_t) (HANDLE, DWORD, LPDWORD);
+    SCDMProc_t SetConsoleDisplayMode;
+    HMODULE hKernel32;
+    BOOL bFreeLib = FALSE, ret;
+    const char KERNEL32_NAME[] = "kernel32.dll";
+    hKernel32 = GetModuleHandleA(KERNEL32_NAME);
+    if (hKernel32==NULL)
+    {
+        hKernel32=LoadLibraryA(KERNEL32_NAME);
+        if (hKernel32==NULL)
+            return FALSE;
+ 
+        bFreeLib=true;
+    }
+ 
+    SetConsoleDisplayMode = (SCDMProc_t)GetProcAddress(hKernel32, "SetConsoleDisplayMode");
+    if (SetConsoleDisplayMode == NULL)
+    {
+        SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
+        ret = FALSE;
+    }
+    else
+    {
+        DWORD tmp;
+        ret = SetConsoleDisplayMode(hOutputHandle, dwNewMode, &tmp);
+    }
+    if (bFreeLib)
+        FreeLibrary(hKernel32);
+ 
+    return ret;
+}
+//=================================================================================================================================================================
+void SetFullScreen()
+{
+    NT_SetConsoleDisplayMode( GetStdHandle( STD_OUTPUT_HANDLE ), 1 );
+}
+//=================================================================================================================================================================
+void SetColor(WORD color)
+{
+    HANDLE hConsoleOutput;
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+ 
+    CONSOLE_SCREEN_BUFFER_INFO screen_buffer_info;
+    GetConsoleScreenBufferInfo(hConsoleOutput, &screen_buffer_info);
+ 
+    WORD wAttributes = screen_buffer_info.wAttributes;
+    color &= 0x000f;
+    wAttributes &= 0xfff0;
+    wAttributes |= color;
+ 
+    SetConsoleTextAttribute(hConsoleOutput, wAttributes);
+}
+//=================================================================================================================================================================
+void gotoxy(int x,int y)
+{
+    HANDLE hConsoleOutput;
+    COORD Cursor_an_Pos = { x,y};
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(hConsoleOutput , Cursor_an_Pos);
+}
+//=================================================================================================================================================================
+void SetScreenColor(WORD color)
+{
+    HANDLE hConsoleOutput;
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+ 
+    CONSOLE_SCREEN_BUFFER_INFO screen_buffer_info;
+    GetConsoleScreenBufferInfo(hConsoleOutput, &screen_buffer_info);
+ 
+    WORD wAttributes = screen_buffer_info.wAttributes;
+    color &= 0x000f;
+    color <<= 4;
+    wAttributes &= 0xff0f;
+    wAttributes |= color;
+ 
+    SetConsoleTextAttribute(hConsoleOutput, wAttributes);
+}
+//=================================================================================================================================================================
+void ShowCur(bool CursorVisibility)
+{
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursor = {1, CursorVisibility};
+    SetConsoleCursorInfo(handle, &cursor);
+}
+//=================================================================================================================================================================
+void drawboard(int m,int n)
+{
+	int i;
+	printf("%c",218);
+	for(i=0;i<n;i++)
+		printf("%c%c%c%c",196,196,196,194);
+	printf("%c%c%c",196,196,196);
+	printf("%c",191);
+//=================================================================================================================================================================
+	cout<<endl;
+//=================================================================================================================================================================
+	for(i=0;i<m;i++){
+		for(int j=0;j<n+2;j++)
+			printf("%c   ",179);
+		printf("\n%c",195);
+		for(j=0;j<n;j++)
+			printf("%c%c%c%c",196,196,196,197);
+		printf("%c%c%c",196,196,196);
+		printf("%c\n",180);
+	}
+	for(int j=0;j<n+2;j++)
+		printf("%c   ",179);
+//=================================================================================================================================================================
+	printf("\n%c",192);
+	for(i=0;i<n;i++)
+		printf("%c%c%c%c",196,196,196,193);
+	printf("%c%c%c",196,196,196);
+	printf("%c",217);
+}
+//=================================================================================================================================================================
+void freespace(int &a,int &b)
+{
+	for(int i=0;i<size;i++)
+		for(int j=0;j<size;j++){
+			if(A[i][j]==blank){
+				a=i;
+				b=j;
+			}
+		}
+}
+//=================================================================================================================================================================
+void genmove(int &row,int &col,int A[][size],int &x,int &y)
+{
+	x=2+(col*4);
+	y=1+(row*2);
+	A[row][col]=2;
+	gotoxy(x,y);
+	printf("x");
+}
+//=================================================================================================================================================================
+int count(int row,int col,int A[][size])
+{
+	int dem=0;
+	for(int i=-2;i<=2;i++)
+		for(int j=-2;j<=2;j++){
+			if(A[row+i][col+j]==2)	dem++;
+		}
+	return dem;
+}
+//=================================================================================================================================================================
+int check(int &i,int &j)
+{
+//4 (attack)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i][j+1]==2 && A[i][j+2]==2 && A[i][j+3]==2 &&(A[i][j-1]==blank && j-1>=0|| A[i][j+4]==blank && j+4<size)){
+				if(A[i][j+4]==blank && j+4<size)	j+=4;	
+				else j-=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==2 && A[i+2][j]==2 && A[i+3][j]==2 && (A[i-1][j]==blank && i-1>=0|| A[i+4][j]==blank && i+4<size)){
+				if(A[i+4][j]==blank && i+4<size)	i+=4;
+				else	i-=1;
+				return i,j;
+
+			}
+			else if(A[i][j]==2 && A[i+1][j+1]==2 && A[i+2][j+2]==2 && A[i+3][j+3]==2 && ((A[i-1][j-1]==blank && i-1>=0 && j-1>=0)||(A[i+4][j+4]==blank && i+4<size && j+4<size))){
+				if(A[i+4][j+4]==blank && i+4<size && j+4<size){
+					j+=4;
+					i+=4;
+				}
+				else{
+					j-=1;
+					i-=1;
+				}
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j-1]==2 && A[i+2][j-2]==2 && A[i+3][j-3]==2 && (A[i+4][j-4]==blank && i+4<size && j-4>=0|| A[i-1][j+1]==blank && i-1>=0 && j+1<size)){
+				if(A[i+4][j-4]==blank && i+4<size && j-4>=0){
+					j-=4;
+					i+=4;
+				}
+				else{
+					i-=1;
+					j+=1;
+				}
+				return i,j;
+			}
+		}
+	}
+//4 (defend)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==1 && A[i][j+1]==1 && A[i][j+2]==1 && A[i][j+3]==1 &&(A[i][j-1]==blank && j-1>=0|| A[i][j+4]==blank && j+4<size)){
+				if(A[i][j+4]==blank && j+4<size)	j+=4;	
+				else j-=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j]==1 && A[i+2][j]==1 && A[i+3][j]==1 && (A[i-1][j]==blank && i-1>=0|| A[i+4][j]==blank && i+4<size)){
+				if(A[i+4][j]==blank && i+4<size)	i+=4;
+				else	i-=1;
+				return i,j;
+
+			}
+			else if(A[i][j]==1 && A[i+1][j+1]==1 && A[i+2][j+2]==1 && A[i+3][j+3]==1 && ((A[i-1][j-1]==blank && i-1>=0 && j-1>=0)||(A[i+4][j+4]==blank && i+4<size && j+4<size))){
+				if(A[i+4][j+4]==blank && i+4<size && j+4<size){
+					j+=4;
+					i+=4;
+				}
+				else{
+					j-=1;
+					i-=1;
+				}
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j-1]==1 && A[i+2][j-2]==1 && A[i+3][j-3]==1 && (A[i+4][j-4]==blank && i+4<size && j-4>=0|| A[i-1][j+1]==blank && i-1>=0 && j+1<size)){
+				if(A[i+4][j-4]==blank && i+4<size && j-4>=0){
+					j-=4;
+					i+=4;
+				}
+				else{
+					i-=1;
+					j+=1;
+				}
+				return i,j;
+			}
+		}
+	}
+//3-0-1 (attack)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i][j+1]==2 && A[i][j+2]==2 && A[i][j+3]==blank && A[i][j+4]==2){
+				j+=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i][j+1]==blank && A[i][j+2]==2 && A[i][j+3]==2 && A[i][j+4]==2){
+				j+=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==2 && A[i+2][j]==2 && A[i+3][j]==blank && A[i+4][j]==2){
+				i+=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==blank && A[i+2][j]==2 && A[i+3][j]==1 && A[i+4][j]==2){
+				i+=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j+1]==2 && A[i+2][j+2]==2 && A[i+3][j+3]==blank && A[i+4][j+4]==2){
+				j+=3;
+				i+=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j+1]==blank && A[i+2][j+2]==2 && A[i+3][j+3]==2 && A[i+4][j+4]==2){
+				j+=1;
+				i+=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j+1]==2 && A[i-2][j+2]==2 && A[i-3][j+3]==blank && A[i-4][j+4]==2){
+				j+=3;
+				i-=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j+1]==blank && A[i-2][j+2]==2 && A[i-3][j+3]==2 && A[i-4][j+4]==2){
+				j+=1;
+				i-=1;
+				return i,j;
+			}
+		}
+	}
+//3-0-1 (defend)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==1 && A[i][j+1]==1 && A[i][j+2]==1 && A[i][j+3]==blank && A[i][j+4]==1){
+				j+=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i][j+1]==blank && A[i][j+2]==1 && A[i][j+3]==1 && A[i][j+4]==1){
+				j+=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j]==1 && A[i+2][j]==1 && A[i+3][j]==blank && A[i+4][j]==1){
+				i+=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j]==blank && A[i+2][j]==1 && A[i+3][j]==1 && A[i+4][j]==1){
+				i+=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j+1]==1 && A[i+2][j+2]==1 && A[i+3][j+3]==blank && A[i+4][j+4]==1){
+				j+=3;
+				i+=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j+1]==blank && A[i+2][j+2]==1 && A[i+3][j+3]==1 && A[i+4][j+4]==1){
+				j+=1;
+				i+=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j+1]==1 && A[i-2][j+2]==1 && A[i-3][j+3]==blank && A[i-4][j+4]==1){
+				j+=3;
+				i-=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j+1]==blank && A[i-2][j+2]==1 && A[i-3][j+3]==1 && A[i-4][j+4]==1){
+				j+=1;
+				i-=1;
+				return i,j;
+			}
+		}
+	}
+//2-2 (attack)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i][j+1]==2 && A[i][j+2]==blank && A[i][j+3]==2 && A[i][j+4]==2){
+				j+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==2 && A[i+2][j]==blank && A[i+3][j]==2 && A[i+4][j]==2){
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j+1]==2 && A[i+2][j+2]==blank && A[i+3][j+3]==2 && A[i+4][j+4]==2){
+				j+=2;
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j+1]==2 && A[i-2][j+2]==blank && A[i-3][j+3]==2 && A[i-4][j+4]==2){
+				j+=2;
+				i-=2;
+				return i,j;
+			}
+		}
+	}
+//2-2 (defend)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==1 && A[i][j+1]==1 && A[i][j+2]==blank && A[i][j+3]==1 && A[i][j+4]==1){
+				j+=2;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j]==1 && A[i+2][j]==blank && A[i+3][j]==1 && A[i+4][j]==1){
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j+1]==1 && A[i+2][j+2]==blank && A[i+3][j+3]==1 && A[i+4][j+4]==1){
+				j+=2;
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j+1]==1 && A[i-2][j+2]==blank && A[i-3][j+3]==1 && A[i-4][j+4]==1){
+				j+=2;
+				i-=2;
+				return i,j;
+			}
+		}
+	}
+//3 (attack)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i][j+1]==2 && A[i][j+2]==2 && A[i][j-1]==blank && A[i][j+3]==blank && j-1>=0 && j+3<size && A[i][j-2]!=2){
+				if(count(i,j-1,A)>count(i,j+3,A))	j-=1;
+				else	j+=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==2 && A[i+2][j]==2 && A[i-1][j]==blank && A[i+3][j]==blank && i-1>=0 && i+3<size && A[i-2][j]!=2){
+				if(count(i-1,j,A)>count(i+3,j,A))	i-=1;
+				else	i+=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j+1]==2 && A[i+2][j+2]==2 && A[i-1][j-1]==blank && A[i+3][j+3]==blank && i-1>=0 && i+3<size && j-1>=0 && j+3<size && A[i-2][j-2]!=2){
+				if(count(i-1,j-1,A)>count(i+3,j+3,A)){
+					i-=1;
+					j-=1;
+				}
+				else{
+					i+=3;
+					j+=3;
+				}
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j+1]==2 && A[i-2][j+2]==2 && A[i+1][j-1]==blank && A[i-3][j+3]==blank && i+1 <size && i-3>=0 && j+3<size && j-1>=0){
+				if(count(i+1,j-1,A)>count(i-3,j+3,A)){
+					j-=1;
+					i+=1;
+				}
+				else{
+					i-=3;
+					j+=3;
+				}
+				return i,j;
+			}
+		}
+	}
+//3 (defend)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==1 && A[i][j+1]==1 && A[i][j+2]==1 && A[i][j-1]==blank && A[i][j+3]==blank && j-1>=0 && j+3<size && A[i][j-2]!=1){
+				if(count(i,j-1,A)>count(i,j+3,A))	j-=1;
+				else	j+=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j]==1 && A[i+2][j]==1 && A[i-1][j]==blank && A[i+3][j]==blank && i-1>=0 && i+3<size && A[i-2][j]!=1){
+				if(count(i-1,j,A)>count(i+3,j,A))	i-=1;
+				else	i+=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j+1]==1 && A[i+2][j+2]==1 && A[i-1][j-1]==blank && A[i+3][j+3]==blank && i-1>=0 && i+3<size && j-1>=0 && j+3<size && A[i-2][j-2]!=1){
+				if(count(i-1,j-1,A)>count(i+3,j+3,A)){
+					i-=1;
+					j-=1;
+				}
+				else{
+					i+=3;
+					j+=3;
+				}
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j+1]==1 && A[i-2][j+2]==1 && A[i+1][j-1]==blank && A[i-3][j+3]==blank && i+1 <size && i-3>=0 && j+3<size && j-1>=0){
+				if(count(i+1,j-1,A)>count(i-3,j+3,A)){
+					j-=1;
+					i+=1;
+				}
+				else{
+					i-=3;
+					j+=3;
+				}
+				return i,j;
+			}
+		}
+	}
+//3(1)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i][j+1]==2 && A[i][j+2]==2 && (A[i][j-1]==blank || A[i][j+3]==blank) && j-1>=0 && j+3<size && A[i][j-2]!=2){
+				if(A[i][j-1]==blank)	j-=1;
+					else	j+=3;
+					return i,j;
+				}
+				else if(A[i][j]==2 && A[i+1][j]==2 && A[i+2][j]==2 && (A[i-1][j]==blank || A[i+3][j]==blank) && i-1>=0 && i+3<size && A[i-2][j]!=2){
+					if(A[i-1][j]==blank)	i-=1;
+					else	i+=3;
+					return i,j;
+				}
+				else if(A[i][j]==2 && A[i+1][j+1]==2 && A[i+2][j+2]==2 && (A[i-1][j-1]==blank || A[i+3][j+3]==blank) && i-1>=0 && i+3<size && j-1>=0 && j+3<size && A[i-2][j-2]!=2){
+					if(A[i-1][j-1]==blank){
+						i-=1;
+						j-=1;
+					}
+					else{
+						i+=3;
+						j+=3;
+					}
+					return i,j;
+				}
+				else if(A[i][j]==2 && A[i-1][j+1]==2 && A[i-2][j+2]==2 && (A[i+1][j-1]==blank || A[i-3][j+3]==blank) && i+1 <size && i-3>=0 && j+3<size && j-1>=0){
+					if(A[i+1][j-1]==blank){
+						j-=1;
+						i+=1;
+					}
+					else{
+						i-=3;
+						j+=3;
+					}
+					return i,j;
+				}
+			}
+		}
+//3-|2 (attack)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i][j+1]==2 && A[i][j+2]==2 && A[i][j+3]==blank && ((A[i+1][j+3]==2 && A[i+2][j+3]==2)||(A[i-1][j+3]==2&&A[i-2][j+3]==2))){
+				j+=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i][j-1]==2 && A[i][j-2]==2 && A[i][j-3]==blank && ((A[i+1][j-3]==2 && A[i+2][j-3]==2)||(A[i-1][j-3]==2&&A[i-2][j-3]==2))){
+				j-=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==2 && A[i+2][j]==2 && A[i+3][j]==blank && ((A[i+3][j+1]==2 && A[i+3][j+2]==2)||(A[i+3][j-1]==2 &&A[i+3][j-2]==2))){
+				i+=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j]==2 && A[i-2][j]==2 && A[i-3][j]==blank && ((A[i-3][j+1]==2 && A[i-3][j+2]==2)||(A[i-3][j-1]==2 &&A[i-3][j-2]==2))){
+				i-=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j+1]==2 && A[i+2][j+2]==2 && A[i+3][j+3]==blank && ((A[i+4][j+2]==2 && A[i+5][j+1]==2)||(A[i+2][j+4]==2 && A[i+1][j+5]==2))){
+				i+=3;
+				j+=3;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j-1]==2 && A[i-2][j-2]==2 && A[i-3][j-3]==blank && ((A[i-4][j-2]==2 && A[i-5][j-1]==2)||(A[i-2][j-4]==2 && A[i-1][j-5]==2))){
+				i-=3;
+				j-=3;
+			}
+			else if(A[i][j]==2 && A[i-1][j+1]==2 && A[i-2][j+2]==2 && A[i-3][j+3]==blank &&((A[i-4][j+2]==1 && A[i-5][j+1]==2)||(A[i-2][j+4]==2 && A[i-1][j+5]==2))){
+				i-=3;
+				j+=3;
+			return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j-1]==2 && A[i+2][j-2]==2 && A[i+3][j-3]==blank &&((A[i+4][j-2]==2 && A[i+5][j-1]==2)||(A[i+2][j-4]==2 && A[i+1][j-5]==2))){
+				i+=3;
+				j-=3;
+			return i,j;
+			}
+		}
+	}
+//3-|2 (defend)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==1 && A[i][j+1]==1 && A[i][j+2]==1 && A[i][j+3]==blank && ((A[i+1][j+3]==1 && A[i+2][j+3]==1)||(A[i-1][j+3]==1 &&A[i-2][j+3]==1))){
+				j+=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i][j-1]==1 && A[i][j-2]==1 && A[i][j-3]==blank && ((A[i+1][j-3]==1 && A[i+2][j-3]==2)||(A[i-1][j-3]==1 &&A[i-2][j-3]==1))){
+				j-=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j]==1 && A[i+2][j]==1 && A[i+3][j]==blank && ((A[i+3][j+1]==1 && A[i+3][j+2]==1)||(A[i+3][j-1]==1 &&A[i+3][j-2]==1))){
+				i+=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j]==1 && A[i-2][j]==1 && A[i-3][j]==blank && ((A[i-3][j+1]==1 && A[i-3][j+2]==1)||(A[i-3][j-1]==1 &&A[i-3][j-2]==1))){
+				i-=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j+1]==1 && A[i+2][j+2]==1 && A[i+3][j+3]==blank && ((A[i+4][j+2]==1 && A[i+5][j+1]==1)||(A[i+2][j+4]==1 && A[i+1][j+5]==1))){
+				i+=3;
+				j+=3;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j-1]==1 && A[i-2][j-2]==1 && A[i-3][j-3]==blank && ((A[i-4][j-2]==1 && A[i-5][j-1]==1)||(A[i-2][j-4]==1 && A[i-1][j-5]==1))){
+				i-=3;
+				j-=3;
+			}
+			else if(A[i][j]==1 && A[i-1][j+1]==1 && A[i-2][j+2]==1 && A[i-3][j+3]==blank &&((A[i-4][j+2]==1 && A[i-5][j+1]==1)||(A[i-2][j+4]==1 && A[i-1][j+5]==1))){
+				i-=3;
+				j+=3;
+			return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j-1]==1 && A[i+2][j-2]==1 && A[i+3][j-3]==blank &&((A[i+4][j-2]==1 && A[i+5][j-1]==1)||(A[i+2][j-4]==1 && A[i+1][j-5]==1))){
+				i+=3;
+				j-=3;
+			return i,j;
+			}
+		}
+	}
+//2v2 (attack)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(i>=4 && j>=2 && j<size-3 && A[i][j]==2 && A[i][j-1]==blank && A[i][j+1]==2 && A[i][j+2]==blank && ((A[i+1][j+1]==2 && A[i+2][j]==2 && j>2 && j<size-2 && A[i+3][j]==blank)||(A[i-1][j+3]==2 && A[i-2][j+4]==2 && A[i-3][j+5]==blank && j<size-6))){
+				j+=2;
+				return i,j;
+			}
+			else if(i>=2 && i<size-3 && A[i][j]==2 && A[i][j-1]==blank && A[i][j+1]==2 && A[i][j+2]==blank && ((A[i-1][j+1]==2 && A[i-2][j]==2 && A[i-3][j-1]==blank)||(A[i+1][j+3]==2 && A[i+2][j+4]==2 && A[i+3][j+5]==blank))){
+				j+=2;
+				return i,j;
+			}
+			else if(i<size-3 && j<size-3 && A[i][j]==2 && A[i+1][j]==blank && A[i-1][j]==2 && A[i-2][j]==blank &&((A[i-1][j+1]==2 && A[i][j+2]==2 && A[i+1][j+3]==blank)||(A[i-3][j-1]==2 && A[i-4][j-2]==2 && A[i-5][j-3]==blank))){
+				i-=2;
+				return i,j;
+			}
+			else if(i<size-3 && j<size-3 && A[i][j]==2 && A[i+1][j]==blank && A[i-1][j]==2 && A[i-2][j]==blank &&((A[i-1][j-1]==2 && A[i][j-2]==2 && A[i+1][j-3]==blank)||(A[i-3][j+1]==2 && A[i-4][j+2]==2 && A[i-5][j+3]==blank))){
+				i-=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j]==blank && A[i+1][j]==2 && A[i+2][j]==blank && i>=3 && i<size-3 && ((A[i][j-2]==2 && A[i+1][j-1]==2 && A[i-1][j-3]==blank && j>3)||(A[i+3][j+1]==2 && A[i+4][j+2]==2 && A[i+5][j+3]==blank && j<size-4))){
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j]==blank && A[i+1][j]==2 && A[i+2][j]==blank && i>=3 && i<size-3 && ((A[i][j+2]==2 && A[i+1][j+1]==2 && A[i-1][j+3]==blank)||(A[i+3][j-1]==2 && A[i+4][j-2]==2 && A[i+5][j-3]==blank && j>3))){
+				i+=2;
+				return i,j;
+			}
+		}
+	}
+//2v2 (defend)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(i>=4 && j>=2 && j<size-3 && A[i][j]==1 && A[i][j-1]==blank && A[i][j+1]==1 && A[i][j+2]==blank && ((A[i+1][j+1]==1 && A[i+2][j]==1 && j>2 && j<size-2 && A[i+3][j]==blank)||(A[i-1][j+3]==1 && A[i-2][j+4]==1 && A[i-3][j+5]==blank && j<size-6))){
+				j+=2;
+				return i,j;
+			}
+			else if(i>=2 && i<size-3 && A[i][j]==1 && A[i][j-1]==blank && A[i][j+1]==1 && A[i][j+2]==blank && ((A[i-1][j+1]==1 && A[i-2][j]==1 && A[i-3][j-1]==blank)||(A[i+1][j+3]==1 && A[i+2][j+4]==1 && A[i+3][j+5]==blank))){
+				j+=2;
+				return i,j;
+			}
+			else if(i<size-3 && j<size-3 && A[i][j]==1 && A[i+1][j]==blank && A[i-1][j]==1 && A[i-2][j]==blank &&((A[i-1][j+1]==1 && A[i][j+2]==1 && A[i+1][j+3]==blank)||(A[i-3][j-1]==1 && A[i-4][j-2]==1 && A[i-5][j-3]==blank))){
+				i-=2;
+				return i,j;
+			}
+			else if(i<size-3 && j<size-3 && A[i][j]==1 && A[i+1][j]==blank && A[i-1][j]==1 && A[i-2][j]==blank &&((A[i-1][j-1]==1 && A[i][j-2]==1 && A[i+1][j-3]==blank)||(A[i-3][j+1]==1 && A[i-4][j+2]==1 && A[i-5][j+3]==blank))){
+				i-=2;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j]==blank && A[i+1][j]==1 && A[i+2][j]==blank && i>=3 && i<size-3 && ((A[i][j-2]==1 && A[i+1][j-1]==1 && A[i-1][j-3]==blank && j>3)||(A[i+3][j+1]==1 && A[i+4][j+2]==1 && A[i+5][j+3]==blank && j<size-4))){
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j]==blank && A[i+1][j]==1 && A[i+2][j]==blank && i>=3 && i<size-3 && ((A[i][j+2]==1 && A[i+1][j+1]==1 && A[i-1][j+3]==blank)||(A[i+3][j-1]==1 && A[i+4][j-2]==1 && A[i+5][j-3]==blank && j>3))){
+				i+=2;
+				return i,j;
+			}
+		}
+	}
+//2-0-1 (attack)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i][j-1]==blank && A[i][j+1]==2 && A[i][j+2]==blank && A[i][j+3]==2 && A[i][j+4]==blank && j+4<size && j-1>=0){
+				if(count(i,j-1,A)>count(i,j+2,A) && count(i,j-1,A)>count(i,j+4,A))	j-=1;
+				else if(count(i,j+2,A)>count(i,j-1,A) && count(i,j+2,A)>count(i,j+4,A))	j+=2;
+				else j+=4;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i][j-1]==blank && A[i][j+1]==blank && A[i][j+2]==2 && A[i][j+3]==2 && A[i][j+4]==blank && j+4<size && j-1>=0){
+				if(count(i,j-1,A)>count(i,j+1,A) && count(i,j-1,A)>count(i,j+4,A))	j-=1;
+				else if(count(i,j+1,A)>count(i,j-1,A)&&count(i,j+1,A)>count(i,j+4,A))	j+=1;
+				else j+=4;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j]==blank && A[i+1][j]==2 && A[i+2][j]==blank && A[i+3][j]==2 && A[i+4][j]==blank && i+4<size && i-1>=0){
+				if(count(i-1,j,A)>count(i+2,j,A) && count(i-1,j,A)>count(i+4,j+4,A))	i-=1;
+				else if(count(i+2,j,A)>count(i-1,j,A) && count(i+2,j,A)>count(i+4,j,A))	i+=2;
+				else i+=4;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j]==blank && A[i+1][j]==blank && A[i+2][j]==2 && A[i+3][j]==2 && A[i+4][j]==blank && i+4<size && i-1>=0){
+				if(count(i-1,j,A)>count(i+1,j,A) && count(i-1,j,A)>count(i+4,j,A))	i-=1;
+				else if(count(i+1,j,A)>count(i-1,j,A)&&count(i+1,j,A)>count(i+4,j,A))	i+=1;
+				else i+=4;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j-1]==blank && A[i+1][j+1]==2 && A[i+2][j+2]==blank && A[i+3][j+3]==2 && A[i+4][j+4]==blank && j+4<size && i-1>=0 && j+4<size && i-1>=0){
+				if(count(i-1,j-1,A)>count(i+2,j+2,A) && count(i-1,j-1,A)>count(i+4,j+4,A)){
+					j-=1;
+					i-=1;
+				}
+				else if(count(i+2,j+2,A)>count(i-1,j-1,A) && count(i+2,j+2,A)>count(i+4,j+4,A)){
+					j+=2;
+					i+=2;
+				}
+				else{
+					j+=4;
+					i+=4;
+				}
+			return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j-1]==blank && A[i+1][j+1]==blank && A[i+2][j+2]==2 && A[i+3][j+3]==2 && A[i+4][j+4]==blank && j+4<size && i-1>=0 && j+4<size && i-1>=0){
+				if(count(i-1,j-1,A)>count(i+1,j+1,A) && count(i-1,j-1,A)>count(i+4,j+4,A)){
+					j-=1;
+					i-=1;
+				}
+				else if(count(i+1,j+1,A)>count(i-1,j-1,A) && count(i+1,j+1,A)>count(i+4,j+4,A)){
+					j+=1;
+					i+=1;
+				}
+				else{
+					j+=4;
+					i+=4;
+				}
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j-1]==blank && A[i-1][j+1]==2 && A[i-2][j+2]==blank && A[i-3][j+3]==2 && A[i-4][j+4]==blank && j-4<size && i-1>=0 && j+4<size && i-1>=0){
+				if(count(i+1,j-1,A)>count(i-2,j+2,A) && count(i+1,j-1,A)>count(i-4,j+4,A)){
+					j-=1;
+					i+=1;
+				}
+				else if(count(i-2,j+2,A)>count(i+1,j-1,A) && count(i-2,j+2,A)>count(i-4,j+4,A)){
+					j+=2;
+					i-=2;
+				}
+				else{
+					j+=4;
+					i-=4;
+				}
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j-1]==blank && A[i-1][j+1]==blank && A[i-2][j+2]==2 && A[i-3][j+3]==2 && A[i-4][j+4]==blank && j-4<size && i-1>=0 && j+4<size && i-1>=0){
+				if(count(i+1,j-1,A)>count(i-1,j+1,A) && count(i+1,j-1,A)>count(i-4,j+4,A)){
+					j-=1;
+					i+=1;
+				}
+				else if(count(i-1,j+1,A)>count(i+1,j-1,A) && count(i-1,j+1,A)>count(i-4,j+4,A)){
+					j+=1;
+					i-=1;
+				}
+				else{
+					j+=4;
+					i-=4;
+				}
+				return i,j;
+			}
+		}
+	}
+//2-0-1 (defend)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==1 && A[i][j-1]==blank && A[i][j+1]==1 && A[i][j+2]==blank && A[i][j+3]==1 && A[i][j+4]==blank && j+4<size && j-1>=0){
+				if(count(i,j-1,A)>count(i,j+2,A) && count(i,j-1,A)>count(i,j+4,A))	j-=1;
+				else if(count(i,j+2,A)>count(i,j-1,A) && count(i,j+2,A)>count(i,j+4,A))	j+=2;
+				else j+=4;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i][j-1]==blank && A[i][j+1]==blank && A[i][j+2]==1 && A[i][j+3]==1 && A[i][j+4]==blank && j+4<size && j-1>=0){
+				if(count(i,j-1,A)>count(i,j+1,A) && count(i,j-1,A)>count(i,j+4,A))	j-=1;
+				else if(count(i,j+1,A)>count(i,j-1,A)&&count(i,j+1,A)>count(i,j+4,A))	j+=1;
+				else j+=4;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j]==blank && A[i+1][j]==1 && A[i+2][j]==blank && A[i+3][j]==1 && A[i+4][j]==blank && i+4<size && i-1>=0){
+				if(count(i-1,j,A)>count(i+2,j,A) && count(i-1,j,A)>count(i+4,j+4,A))	i-=1;
+				else if(count(i+2,j,A)>count(i-1,j,A) && count(i+2,j,A)>count(i+4,j,A))	i+=2;
+				else i+=4;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j]==blank && A[i+1][j]==blank && A[i+2][j]==1 && A[i+3][j]==1 && A[i+4][j]==blank && i+4<size && i-1>=0){
+				if(count(i-1,j,A)>count(i+1,j,A) && count(i-1,j,A)>count(i+4,j,A))	i-=1;
+				else if(count(i+1,j,A)>count(i-1,j,A)&&count(i+1,j,A)>count(i+4,j,A))	i+=1;
+				else i+=4;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j-1]==blank && A[i+1][j+1]==1 && A[i+2][j+2]==blank && A[i+3][j+3]==1 && A[i+4][j+4]==blank && j+4<size && i-1>=0 && j+4<size && i-1>=0){
+				if(count(i-1,j-1,A)>count(i+2,j+2,A) && count(i-1,j-1,A)>count(i+4,j+4,A)){
+					j-=1;
+					i-=1;
+				}
+				else if(count(i+2,j+2,A)>count(i-1,j-1,A) && count(i+2,j+2,A)>count(i+4,j+4,A)){
+					j+=2;
+					i+=2;
+				}
+				else{
+					j+=4;
+					i+=4;
+				}
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j-1]==blank && A[i+1][j+1]==blank && A[i+2][j+2]==1 && A[i+3][j+3]==1 && A[i+4][j+4]==blank && j+4<size && i-1>=0 && j+4<size && i-1>=0){
+				if(count(i-1,j-1,A)>count(i+1,j+1,A) && count(i-1,j-1,A)>count(i+4,j+4,A)){
+					j-=1;
+					i-=1;
+				}
+				else if(count(i+1,j+1,A)>count(i-1,j-1,A) && count(i+1,j+1,A)>count(i+4,j+4,A)){
+					j+=1;
+					i+=1;
+				}
+				else{
+					j+=4;
+					i+=4;
+				}
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j-1]==blank && A[i-1][j+1]==1 && A[i-2][j+2]==blank && A[i-3][j+3]==1 && A[i-4][j+4]==blank && j-4<size && i-1>=0 && j+4<size && i-1>=0){
+				if(count(i+1,j-1,A)>count(i-2,j+2,A) && count(i+1,j-1,A)>count(i-4,j+4,A)){
+					j-=1;
+					i+=1;
+				}
+				else if(count(i-2,j+2,A)>count(i+1,j-1,A) && count(i-2,j+2,A)>count(i-4,j+4,A)){
+					j+=2;
+					i-=2;
+				}
+				else{
+					j+=4;
+					i-=4;
+				}
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j-1]==blank && A[i-1][j+1]==blank && A[i-2][j+2]==1 && A[i-3][j+3]==1 && A[i-4][j+4]==blank && j-4<size && i-1>=0 && j+4<size && i-1>=0){
+				if(count(i+1,j-1,A)>count(i-1,j+1,A) && count(i+1,j-1,A)>count(i-4,j+4,A)){
+					j-=1;
+					i+=1;
+				}
+				else if(count(i-1,j+1,A)>count(i+1,j-1,A) && count(i-1,j+1,A)>count(i-4,j+4,A)){
+					j+=1;
+					i-=1;
+				}
+				else{
+					j+=4;
+					i-=4;
+				}
+				return i,j;
+			}
+		}
+	}
+//2-0-1 (attack)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i][j+1]==2 && A[i][j+2]==blank && A[i][j+3]==2 && (A[i][j-1]==blank || A[i][j+4]==blank)){
+				j+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==2 && A[i+2][j]==blank && A[i+3][j]==2 && (A[i-1][j]==blank || A[i+4][j]==blank)){
+				j+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i][j+1]==2 && A[i][j-1]==blank && A[i][j-2]==2 && (A[i][j+1]==blank || A[i][j-4]==blank)){
+				j-=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==2 && A[i-1][j]==blank && A[i-2][j]==2 && (A[i+1][j]==blank || A[i-4][j]==blank)){
+				i-=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j+1]==2 && A[i+2][j+2]==blank && A[i+3][j+3]==2 && (A[i-1][j-1]==blank || A[i+4][j+4]==blank)){
+				j+=2;
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j+1]==2 && A[i-2][j+2]==blank && A[i-3][j+3]==2 && (A[i+1][j-1]==blank || A[i-4][j+4]==blank)){
+				j+=2;
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j+1]==blank && A[i+2][j+2]==2 && A[i+3][j+3]==2 && (A[i+4][j+4]==blank || A[i-1][j-1]==blank)){
+				j+=1;
+				i+=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j+1]==blank && A[i-2][j+2]==2 && A[i-3][j+3]==2 && (A[i-4][j+4]==blank || A[i+1][j-1]==blank)){
+				j+=1;
+				i-=1;
+				return i,j;
+			}
+		}
+	}
+//2-|2 (attack)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i][j+1]==2 && A[i][j+2]==blank && j>=2 && j<size-4 && ((A[i+1][j+2]==2 && A[i+2][j+2]==2 && i<size-4 && i>=2)||(A[i-1][j+2]==2 && A[i-2][j+2]==2 && i>=3 && i<size-3))){
+				j+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j+1]==2 && A[i-2][j+2]==blank && j>2 && j<size-4 && ((A[i-1][j+3]==2 && A[i][j+4]==2 && i>=4 && i<size-4 && j>2 && j<size-3)||(A[i-3][j+1]==2 && A[i-4][j]==2 && i>6 && i<size-7 && j>=2 && j<size-3))){
+				j+=2;
+				i-=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i][j-1]==2 && A[i][j-2]==blank && i<size-2 && i>4 && ((A[i+1][j-2]==2 && A[i+2][j-2]==2 && j>1 && j<size-2)||(A[i-1][j-2]==2 && A[i-2][j-2]==2))){
+				j-=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j-1]==2 && A[i+2][j-2]==blank &&i<size-6 && i>2 &&((A[i+3][j-1]==2 && A[i+4][j]==2 && j>2 && j<size-2)||(A[i+1][j-3]==2 && A[i][j-4]==2 && j>6 && j<size-4))){
+				j-=2;
+				i+=2;
+				return i,j;
+			}
+		}
+	}
+//2-|2 (defend)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==1 && A[i][j+1]==1 && A[i][j+2]==blank && j>=2 && j<size-4 && ((A[i+1][j+2]==1 && A[i+2][j+2]==1 && i<size-4 && i>=2)||(A[i-1][j+2]==1 && A[i-2][j+2]==1 && i>=3 && i<size-3))){
+				j+=2;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j+1]==1 && A[i-2][j+2]==blank && j>2 && j<size-4 && ((A[i-1][j+3]==1 && A[i][j+4]==1 && i>=4 && i<size-4 && j>2 && j<size-3)||(A[i-3][j+1]==1 && A[i-4][j]==1 && i>6 && i<size-7 && j>=2 && j<size-3))){
+				j+=2;
+				i-=2;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i][j-1]==1 && A[i][j-2]==blank && i<size-2 && i>4 && ((A[i+1][j-2]==1 && A[i+2][j-2]==1 && j>1 && j<size-2)||(A[i-1][j-2]==1 && A[i-2][j-2]==1))){
+				j-=2;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j-1]==1 && A[i+2][j-2]==blank &&i<size-6 && i>2 &&((A[i+3][j-1]==1 && A[i+4][j]==1 && j>2 && j<size-2)||(A[i+1][j-3]==1 && A[i][j-4]==1 && j>6 && j<size-4))){
+				j-=2;
+				i+=2;
+				return i,j;
+			}
+		}
+	}
+//1^1 (defend)
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==1 && A[i][j-1]==blank && A[i][j-2]==1 &&( A[i-1][j-1]==1 || A[i+1][j-1]==1)){
+				j-=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j]==blank && A[i+2][j]==1 && (A[i+1][j-1]==1 || A[i+1][j+1]==1)){
+				i+=1;
+				return i,j;
+			}
+		}
+	}
+//2
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i+1][j+1]==2 && A[i+2][j+2]==blank && j+2<size && i+2<size){
+				j+=2;
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j-1]==2 && A[i+2][j-2]==blank && j-2>=0 && i+2<size){
+				j-=2;
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i][j+1]==2 && A[i][j+2]==blank && j+2<size){
+				j+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i][j-1]==2 && A[i][j-2] && j-2>=0){
+				j-=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==2 && A[i+2][j]==blank && i+2<size){
+				i+=2;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j]==2 && A[i-2][j]==blank && i-2>=0){
+				i-=2;
+				return i,j;
+			}
+		}
+	}
+//random
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==2 && A[i+1][j+1]==blank && i+1<size && j+1<size){
+				i+=1;
+				j+=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j-1]==blank && i-1>=0 && j-1>=0){
+				i-=1;
+				j-=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j]==blank && i-1>=0){
+				i-=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i-1][j+1]==blank && i-1>=0 && j+1<size){
+				i-=1;
+				j+=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j-1]==blank && i+1<size && j-1>=0){
+				i+=1;
+				j-=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i][j+1]==blank && j+1<size){
+				j+=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i][j-1]==blank && j-1>=0){
+				j-=1;
+				return i,j;
+			}
+			else if(A[i][j]==2 && A[i+1][j]==blank && i+1<size){
+				i+=1;
+				return i,j;
+			}
+		}
+	}
+//random
+//=================================================================================================================================================================
+	for(i=0;i<size;i++){
+		for(j=0;j<size;j++){
+			if(A[i][j]==1 && A[i][j+1]==blank && j+1<size){
+				j+=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i][j-1]==blank && j-1>=0){
+				j-=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j]==blank && i+1<size){
+				i+=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j]==blank && i-1>=0){
+				i-=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j+1]==blank && i+1<size && j+1<size){
+				i+=1;
+				j+=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j-1]==blank && i-1>=0 && j-1>=0){
+				i-=1;
+				j-=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i-1][j+1]==blank && i-1>=0 && j+1<size){
+				i-=1;
+				j+=1;
+				return i,j;
+			}
+			else if(A[i][j]==1 && A[i+1][j-1]==blank && i+1<size && j-1>=0){
+				i+=1;
+				j-=1;
+				return i,j;
+			}
+		}
+	}
+	return i,j;
+}
+
+//=================================================================================================================================================================
+void solve()
+{
+	SetColor(12);
+	check(i,j);
+	genmove(i,j,A,x,y);
+}
+//=================================================================================================================================================================
+void playfirst()
+{
+	ShowCur(false);
+	SetScreenColor(7);
+	SetFullScreen();
+	SetColor(9);
+	gotoxy(7,36);
+	printf("Player: O");
+	gotoxy(50,36);
+	SetColor(12);
+	printf("Computer: X");
+	int a=8,b=8;
+	for(int z=0;z<size;z++)
+		for(int k=0;k<size;k++)
+			A[z][k]=0;
+	checkwin(a,b);
+	int x,y;
+	SetColor(0);
+	gotoxy(0,0);
+	drawboard(size-1,size-1);
+	x=2+(b*4);
+	y=1+(a*2);
+	gotoxy(x,y);
+	char nhap;
+	int dem=1;
+	printf("|");
+	while(true){
+		nhap=getch();
+		if((nhap=='w'||nhap=='W') && (A[a-1][b]==blank)){
+			if(a>0)
+				a--;
+			else if(a==0 && b>=size-1 && A[size-1][0]==blank){
+				a=size-1;
+				b=0;
+			}
+			else if(a==0 && A[size-1][b++]==blank){
+				a=size-1;
+				b++;
+			}
+			else	freespace(a,b);
+		}
+		if((nhap=='z' || nhap=='Z') && (A[a+1][b-1]==blank)){
+			if(b>0 && a<size-1){
+				b-=1;
+				a+=1;
+			}
+		}
+		if((nhap=='e' || nhap=='E') && (A[a-1][b+1]==blank)){
+			if(a>0 && b<size-1){
+				a-=1;
+				b+=1;
+			}
+		}
+		if((nhap=='q' || nhap=='Q') && (A[a-1][b-1]==blank)){
+			if(a>0 && b>0){
+				a-=1;
+				b-=1;
+			}
+		}
+		if((nhap=='c' || nhap=='C') && (A[a+1][b+1]==blank)){
+			if(a<size-1 && b<size-1){
+				a+=1;
+				b+=1;
+			}
+		}
+		if((nhap=='s'||nhap=='S') && (A[a+1][b]==blank)){
+			if(a<size-1 && A[a+1][b]==blank)
+				a+=1;
+			else if(a==size-1 && b==size-1 && A[0][0]==blank){
+				a=0;
+				b=0;
+			}
+			else if(a==size-1 && A[0][b+1]==blank){
+				a=0;
+				b++;
+			}
+			else	freespace(a,b);
+		}
+		if((nhap=='d'||nhap=='D') && (A[a][b+1]==blank)){
+			if(b<size-1 && A[a][b+1]==blank)
+				b+=1;
+			else if(a==size-1 && b==size-1 && A[0][0]==blank){
+				a=0;
+				b=0;
+			}
+			else if(b==size-1 && A[a+1][0]==blank){
+				a++;
+				b=0;
+			}
+			else	freespace(a,b);
+		}
+		if((nhap=='a'||nhap=='A') && (A[a][b-1]==blank)){
+			if(b>0 && A[a][b-1]==blank)
+				b-=1;
+			else if(a==0 && b==0 && A[size-1][size-1]==blank){
+				a=size-1;
+				b=size-1;
+			}
+			else if(b==0 && A[a-1][size-1]==blank){
+				a-=1;
+				b=size-1;
+			}
+			else	freespace(a,b);
+		}
+		if(nhap=='f' || nhap=='F'){
+			for(int i=0;i<size;i++)
+				for(int j=0;j<size;j++)
+					if(A[i][j]==blank && A[i-1][j-1]!=blank && A[i-1][j]!=blank && A[i-1][j+1]!=blank && A[i][j-1]!=blank && A[i][j+1]!=blank && A[i+1][j-1]!=blank && A[i+1][j]!=blank && 
+
+A[i+1][j+1]!=blank){
+						a=i;
+						b=j;
+					}
+		}
+		if(nhap=='r' || nhap=='R')	freespace(a,b);
+		gotoxy(x,y);
+		printf(" ");
+		x=2+(b*4);
+		y=1+(a*2);
+		gotoxy(x,y);
+		printf("|");
+		if(nhap==13){
+			gotoxy(x,y);
+			SetColor(9);
+			A[a][b]=1;
+			printf("o");//=====================
+			if(checkwin(a,b)==false)	break;
+			dem++;
+			solve();
+			if(checkwin(a,b)==false)	break;
+			dem++;
+			if(a==size-1 && b==size-1 && A[0][0]==blank){
+				a=0;
+				b=0;
+			}
+			else if(b==size-1 && A[a+1][0]==blank){
+				b=0;
+				a+=1;
+			}
+			else if(A[a][b+1]==blank && b<size-2)	b++;
+			else if(A[a][b-1]==blank && b>0)	b--;
+			else if(A[a-1][b]==blank && a>0)	a--;
+			else if(A[a+1][b]==blank && a<size-2)	a++;
+			else if(A[a+1][b+1]==blank && a<size-2 && b<size-2){
+				a++;
+				b++;
+			}
+			else if(A[a+1][b-1]==blank && a+1<size-2 && b-1<size-2){
+				a++;
+				b--;
+			}
+			else if(A[a-1][b+1]==blank && a-1>=0 && b+1<size-2){
+				a--;
+				b++;
+			}
+			else if(A[a-1][b-1]==blank && a-1>=0 && b-1>=0){
+				a--;
+				b--;
+			}
+			else	freespace(a,b);
+			x=2+(b*4);
+			y=1+(a*2);
+			SetColor(0);
+			gotoxy(x,y);
+			printf("|");
+		}
+		if(nhap==27){
+			system("cls");
+			exit(0);
+		}
+		if(checkdraw()==true)	break;
+	}
+	SetScreenColor(0);
+	SetColor(10);
+	if(checkdraw()==true){
+		gotoxy(25,36);
+		printf("Game Draw !!!");
+	}
+	else{
+		if(dem%2==0)	dem=2;
+		else	dem=1;
+		gotoxy(25,36);
+		if(dem==1)	printf("You Win !!!");
+		else	printf("Computer Win !!!");
+	}
+		gotoxy(13,37);
+		printf("===========================================");
+		gotoxy(20,38);
+		printf("Press N to start a new game");
+		gotoxy(17,39);
+		printf("Press M to return the the maincreen");
+		gotoxy(23,40);
+		printf("Press any key to exit");
+		nhap=getch();
+		if(nhap=='n' || nhap=='N'){
+			system("cls");
+			newgame();
+		}
+		else if(nhap=='m' || nhap=='M'){
+			system("cls");
+			mainscreen();
+		}
+		else	exit(0);
+}
+//=================================================================================================================================================================
+void playsecond()
+{
+	ShowCur(false);
+	SetScreenColor(7);
+	SetFullScreen();
+	SetColor(9);
+	gotoxy(7,36);
+	printf("Player: O");
+	gotoxy(50,36);
+	SetColor(12);
+	printf("Computer: X");
+	int a=8,b=8;
+	int x,y;
+	for(int z=0;z<size;z++)
+		for(int k=0;k<size;k++)
+			A[z][k]=0;
+	checkwin(a,b);
+	SetColor(0);
+	gotoxy(0,0);
+	drawboard(size-1,size-1);
+	x=2+(b*4);
+	y=1+(a*2);
+	gotoxy(x,y);
+	SetColor(12);
+	printf("x");
+	b++;
+	SetColor(0);
+	x=2+(b*4);
+	y=1+(a*2);
+	gotoxy(x,y);
+	char nhap;
+	int dem=1;
+	printf("|");
+	while(true){
+		nhap=getch();
+		if((nhap=='w'||nhap=='W') && (A[a-1][b]==blank)){
+			if(a>0)
+				a--;
+			else if(a==0 && b>=size-1 && A[size-1][0]==blank){
+				a=size-1;
+				b=0;
+			}
+			else if(a==0 && A[size-1][b++]==blank){
+				a=size-1;
+				b++;
+			}
+			else	freespace(a,b);
+		}
+		if((nhap=='z' || nhap=='Z') && (A[a+1][b-1]==blank)){
+			if(b>0 && a<size-1){
+				b-=1;
+				a+=1;
+			}
+		}
+		if((nhap=='e' || nhap=='E') && (A[a-1][b+1]==blank)){
+			if(a>0 && b<size-1){
+				a-=1;
+				b+=1;
+			}
+		}
+		if((nhap=='q' || nhap=='Q') && (A[a-1][b-1]==blank)){
+			if(a>0 && b>0){
+				a-=1;
+				b-=1;
+			}
+		}
+		if((nhap=='c' || nhap=='C') && (A[a+1][b+1]==blank)){
+			if(a<size-1 && b<size-1){
+				a+=1;
+				b+=1;
+			}
+		}
+		if((nhap=='s'||nhap=='S') && (A[a+1][b]==blank)){
+			if(a<size-1 && A[a+1][b]==blank)
+				a+=1;
+			else if(a==size-1 && b==size-1 && A[0][0]==blank){
+				a=0;
+				b=0;
+			}
+			else if(a==size-1 && A[0][b+1]==blank){
+				a=0;
+				b++;
+			}
+			else	freespace(a,b);
+		}
+		if((nhap=='d'||nhap=='D') && (A[a][b+1]==blank)){
+			if(b<size-1 && A[a][b+1]==blank)
+				b+=1;
+			else if(a==size-1 && b==size-1 && A[0][0]==blank){
+				a=0;
+				b=0;
+			}
+			else if(b==size-1 && A[a+1][0]==blank){
+				a++;
+				b=0;
+			}
+			else	freespace(a,b);
+		}
+		if((nhap=='a'||nhap=='A') && (A[a][b-1]==blank)){
+			if(b>0 && A[a][b-1]==blank)
+				b-=1;
+			else if(a==0 && b==0 && A[size-1][size-1]==blank){
+				a=size-1;
+				b=size-1;
+			}
+			else if(b==0 && A[a-1][size-1]==blank){
+				a-=1;
+				b=size-1;
+			}
+			else	freespace(a,b);
+		}
+		if(nhap=='f' || nhap=='F'){
+			for(int i=0;i<size;i++)
+				for(int j=0;j<size;j++)
+					if(A[i][j]==blank && A[i-1][j-1]!=blank && A[i-1][j]!=blank && A[i-1][j+1]!=blank && A[i][j-1]!=blank && A[i][j+1]!=blank && A[i+1][j-1]!=blank && A[i+1][j]!=blank && 
+
+A[i+1][j+1]!=blank){
+						a=i;
+						b=j;
+					}
+		}
+		if(nhap=='r' || nhap=='R')	freespace(a,b);
+		gotoxy(x,y);
+		printf(" ");
+		x=2+(b*4);
+		y=1+(a*2);
+		gotoxy(x,y);
+		printf("|");
+		if(nhap==13){
+			gotoxy(x,y);
+			SetColor(9);
+			A[a][b]=1;
+			printf("o");//=====================
+			if(checkwin(a,b)==false)	break;
+			dem++;
+			solve();
+			if(checkwin(a,b)==false)	break;
+			dem++;
+			if(a==size-1 && b==size-1 && A[0][0]==blank){
+				a=0;
+				b=0;
+			}
+			else if(a==size-1 && b==size-1)	freespace(a,b);
+			else if(b==size-1 && A[a+1][0]==blank){
+				b=0;
+				a+=1;
+			}
+			else if(A[a][b+1]==blank && b<size-1)	b++;
+			else if(A[a][b-1]==blank && b>0)	b--;
+			else if(A[a-1][b]==blank && a>0)	a--;
+			else if(A[a+1][b]==blank && a<size-1)	a++;
+			else if(A[a+1][b+1]==blank && a<size-1 && b<size-1){
+				a++;
+				b++;
+			}
+			else if(A[a+1][b-1]==blank){
+				a++;
+				b--;
+			}
+			else if(A[a-1][b+1]==blank){
+				a--;
+				b++;
+			}
+			else if(A[a-1][b-1]==blank){
+				a--;
+				b--;
+			}
+			else	freespace(a,b);
+			x=2+(b*4);
+			y=1+(a*2);
+			SetColor(0);
+			gotoxy(x,y);
+			printf("|");
+		}
+		if(nhap==27){
+			system("cls");
+			exit(0);
+		}
+		if(checkdraw()==true)	break;
+		gotoxy(0,40);
+	}
+	SetScreenColor(0);
+	SetColor(10);
+	if(checkdraw()==true){
+		gotoxy(25,36);
+		printf("Game Draw !!!");
+	}
+	else{
+		if(dem%2==0)	dem=2;
+		else	dem=1;
+		gotoxy(25,36);
+		if(dem==1)	printf("You Win !!!");
+		else	printf("Computer Win !!!");
+	}
+		gotoxy(13,36);
+		printf("===========================================");
+		gotoxy(20,37);
+		printf("Press N to start a new game");
+		gotoxy(17,38);
+		printf("Press M to return the the maincreen");
+		gotoxy(23,39);
+		printf("Press any key to exit");
+		nhap=getch();
+		if(nhap=='n' || nhap=='N'){
+			system("cls");
+			newgame();
+		}
+		else if(nhap=='m' || nhap=='M'){
+			system("cls");
+			mainscreen();
+		}
+		else	exit(0);
+}
+//=================================================================================================================================================================
+void oneplayer()
+{
+	int x=30,y=9;
+	gotoxy(25,7);
+	SetColor(10);
+	printf("Please select your turn to play");
+	gotoxy(34,9);
+	SetColor(11);
+	printf("1. Play first");
+	gotoxy(33,11);
+	SetColor(13);
+	printf("2. Play second");
+	gotoxy(30,9);
+	SetColor(12);
+	printf("%c",16);
+	char nhap;
+	int dem=1;
+	while(true){
+		nhap=getch();
+		if(nhap==80){
+			gotoxy(x,y);
+			printf("%c",0);
+			y+=2;
+			if(y>11)	y=9;
+			gotoxy(x,y);
+			dem++;
+			if(dem>2)	dem=1;
+		printf("%c",16);
+		}
+		else if(nhap==72){
+			gotoxy(x,y);
+			printf("%c",0);
+			y-=2;
+			if(y<9)	y=11;
+			gotoxy(x,y);
+			dem--;
+			if(dem<1)	dem=2;
+		printf("%c",16);
+		}
+		if(nhap==13){
+			if(dem==1){
+				system("cls");
+				playfirst();
+			}
+			else{
+				system("cls");
+				playsecond();
+			}
+		}
+		if(nhap==27)	exit(0);
+	}
+}
+//=================================================================================================================================================================
+void twoplayer()
+{
+	ShowCur(false);
+	SetScreenColor(7);
+	SetFullScreen();
+	SetColor(0);
+	drawboard(size-1,size-1);
+	int a=8,b=8;
+	checkwin(a,b);
+	for(int z=0;z<size;z++)
+		for(int k=0;k<size;k++)
+			A[z][k]=0;
+	int x,y;
+	x=2+(b*4);
+	y=1+(a*2);
+	gotoxy(x,y);
+	char nhap;
+	int dem=1;
+	printf("|");
+	while(true){
+		nhap=getch();
+		if((nhap=='w'||nhap=='W') && (A[a-1][b]==blank)){
+			if(a>0)
+				a--;
+			else if(a==0 && b>=size-1 && A[size-1][0]==blank){
+				a=size-1;
+				b=0;
+			}
+			else if(a==0 && A[size-1][b++]==blank){
+				a=size-1;
+				b++;
+			}
+			else	freespace(a,b);
+		}
+		if((nhap=='z' || nhap=='Z') && (A[a+1][b-1]==blank)){
+			if(b>0 && a<size-1){
+				b-=1;
+				a+=1;
+			}
+		}
+		if((nhap=='e' || nhap=='E') && (A[a-1][b+1]==blank)){
+			if(a>0 && b<size-1){
+				a-=1;
+				b+=1;
+			}
+		}
+		if((nhap=='q' || nhap=='Q') && (A[a-1][b-1]==blank)){
+			if(a>0 && b>0){
+				a-=1;
+				b-=1;
+			}
+		}
+		if((nhap=='c' || nhap=='C') && (A[a+1][b+1]==blank)){
+			if(a<size-1 && b<size-1){
+				a+=1;
+				b+=1;
+			}
+		}
+		if((nhap=='s'||nhap=='S') && (A[a+1][b]==blank)){
+			if(a<size-1 && A[a+1][b]==blank)
+				a+=1;
+			else if(a==size-1 && b==size-1 && A[0][0]==blank){
+				a=0;
+				b=0;
+			}
+			else if(a==size-1 && A[0][b+1]==blank){
+				a=0;
+				b++;
+			}
+			else	freespace(a,b);
+		}
+		if((nhap=='d'||nhap=='D') && (A[a][b+1]==blank)){
+			if(b<size-1 && A[a][b+1]==blank)
+				b+=1;
+			else if(a==size-1 && b==size-1 && A[0][0]==blank){
+				a=0;
+				b=0;
+			}
+			else if(b==size-1 && A[a+1][0]==blank){
+				a++;
+				b=0;
+			}
+			else	freespace(a,b);
+		}
+		if((nhap=='a'||nhap=='A') && (A[a][b-1]==blank)){
+			if(b>0 && A[a][b-1]==blank)
+				b-=1;
+			else if(a==0 && b==0 && A[size-1][size-1]==blank){
+				a=size-1;
+				b=size-1;
+			}
+			else if(b==0 && A[a-1][size-1]==blank){
+				a-=1;
+				b=size-1;
+			}
+			else	freespace(a,b);
+		}
+		if(nhap=='f' || nhap=='F'){
+			for(int i=0;i<size;i++)
+				for(int j=0;j<size;j++)
+					if(A[i][j]==blank && A[i-1][j-1]!=blank && A[i-1][j]!=blank && A[i-1][j+1]!=blank && A[i][j-1]!=blank && A[i][j+1]!=blank && A[i+1][j-1]!=blank && A[i+1][j]!=blank && 
+
+A[i+1][j+1]!=blank){
+						a=i;
+						b=j;
+					}
+		}
+		if(nhap=='r' || nhap=='R'){
+			freespace(a,b);
+		}
+		gotoxy(x,y);
+		printf(" ");
+		x=2+(b*4);
+		y=1+(a*2);
+		gotoxy(x,y);
+		printf("|");
+		if(nhap==13){
+			gotoxy(x,y);
+			if(dem%2==0){
+				SetColor(12);
+				A[a][b]=2;
+				printf("x");
+			}
+			else{
+				SetColor(9);
+				A[a][b]=1;
+				printf("o");
+			}
+			if(checkwin(a,b)==false)	break;
+			dem++;
+			if(a==size-1 && b==size-1 && A[0][0]==blank){
+				a=0;
+				b=0;
+			}
+			else if(b==size-1 && A[a+1][0]==blank && a<size-1){
+				b=0;
+				a+=1;
+			}
+			else if(A[a][b+1]==blank && b<size-1)	b++;
+			else if(A[a][b-1]==blank && b>0)	b--;
+			else if(A[a-1][b]==blank && a>0)	a--;
+			else if(A[a+1][b]==blank && a<size-1)	a++;
+			else if(A[a+1][b+1]==blank && a<size-1 && b<size-1){
+				a++;
+				b++;
+			}
+			else if(A[a+1][b-1]==blank){
+				a++;
+				b--;
+			}
+			else if(A[a-1][b+1]==blank){
+				a--;
+				b++;
+			}
+			else if(A[a-1][b-1]==blank){
+				a--;
+				b--;
+			}
+			else	freespace(a,b);
+			x=2+(b*4);
+			y=1+(a*2);
+			gotoxy(x,y);
+			printf("|");
+		}
+		if(nhap==27){
+			system("cls");
+			exit(0);
+		}
+		if(checkdraw()==true)	break;
+	}
+	SetScreenColor(6);
+	if(checkdraw()==true){
+		gotoxy(25,13);
+		printf("Game Draw !!!");
+	}
+	else{
+		if(dem%2==0)	dem=2;
+		else	dem=1;
+		gotoxy(25,13);
+		printf("Player %d Win !!!",dem);
+	}
+		gotoxy(13,14);
+		printf("===========================================");
+		gotoxy(20,15);
+		printf("Press N to start a new game");
+		gotoxy(17,16);
+		printf("Press M to return the the maincreen");
+		gotoxy(23,17);
+		printf("Press any key to exit");
+		nhap=getch();
+		if(nhap=='n' || nhap=='N'){
+			system("cls");
+			newgame();
+		}
+		else if(nhap=='m' || nhap=='M'){
+			system("cls");
+			mainscreen();
+		}
+		else	exit(0);
+}
+//=================================================================================================================================================================
+void mainscreen()
+{
+	SetFullScreen();
+	SetScreenColor(8);
+	system("cls");
+	ShowCur(false);
+	gotoxy(30,5);
+	SetColor(10);
+	printf("Mini Tik Tak Toe Caro Game");
+	SetColor(11);
+	gotoxy(35,7);
+	printf("1. Introduce");
+	SetColor(13);
+	gotoxy(35,9);
+	printf("2. New Game");
+	SetColor(14);
+	gotoxy(35,11);
+	printf("3. Tutorial");
+	SetColor(12);
+	gotoxy(35,13);
+	printf("4. Quit");
+	int x=30,y=7;
+	gotoxy(x,y);
+	printf("%c",16);
+	char nhap;
+	int dem=1;
+	while(true){
+		nhap=getch();
+		if(nhap==80){
+			gotoxy(x,y);
+			printf("%c",0);
+			y+=2;
+			if(y>13)	y=7;
+			gotoxy(x,y);
+			dem++;
+			if(dem>4)	dem=1;
+		printf("%c",16);
+		}
+		else if(nhap==72){
+			gotoxy(x,y);
+			printf("%c",0);
+			y-=2;
+			if(y<7)	y=13;
+			gotoxy(x,y);
+			dem--;
+			if(dem<1)	dem=4;
+		printf("%c",16);
+		}
+		if(nhap==13){
+			if(dem==1){
+				system("cls");
+				introduce();
+			}
+			else if(dem==2){
+				system("cls");
+				newgame();
+			}
+			else if(dem==3){
+				system("cls");
+				howtoplay();
+			}
+			else{
+				system("cls");
+				exit(0);
+			}
+		}
+		if(nhap==27)	exit(0);
+	}
+}
+//=================================================================================================================================================================
+void introduce()
+{
+	gotoxy(10,5);
+	SetColor(10);
+	printf(" This program was built and developed by DEV - C Archius Vuong\n");
+	gotoxy(35,7);
+	printf("17110313");
+	gotoxy(26,9);
+	SetColor(14);
+	printf("Mini Tik Tak Toe Caro Game");
+	SetColor(11);
+	gotoxy(31,11);
+	printf("1. Main Screen");
+	SetColor(12);
+	gotoxy(31,13);
+	printf("   2. Quit");
+	char nhap;
+	int dem=1;
+	int x=29,y=11;
+	gotoxy(x,y);
+	printf("%c",16);
+	while(true){
+		nhap=getch();
+		if(nhap==80){
+			gotoxy(x,y);
+			printf("%c",0);
+			y+=2;
+			if(y>13)	y=11;
+			gotoxy(x,y);
+			dem++;
+			if(dem>2)	dem=1;
+		printf("%c",16);
+		}
+		else if(nhap==72){
+			gotoxy(x,y);
+			printf("%c",0);
+			y-=2;
+			if(y<11)	y=13;
+			gotoxy(x,y);
+			dem--;
+			if(dem<1)	dem=2;
+		printf("%c",16);
+		}
+		if(nhap==13){
+			if(dem==1){
+				system("cls");
+				mainscreen();
+			}
+			else	exit(0);
+		}
+	}
+}
+//==================================================================================================================================================================
+void newgame()
+{
+	SetColor(10);
+	gotoxy(30,6);
+	printf("Please select gameplay mode");
+	SetColor(11);
+	gotoxy(34,8);
+	printf("1. Player 1 vs AI");
+	gotoxy(31,10);
+	SetColor(13);
+	printf("2. Player 1 vs Player 2");
+	char nhap;
+	int dem=1;
+	int x=29,y=8;
+	SetColor(12);
+	gotoxy(x,y);
+	printf("%c",16);
+	while(true){
+		nhap=getch();
+		if(nhap==80){
+			gotoxy(x,y);
+			printf("%c",0);
+			y+=2;
+			if(y>10)	y=8;
+			gotoxy(x,y);
+			dem++;
+			if(dem>2)	dem=1;
+		printf("%c",16);
+		}
+		else if(nhap==72){
+			gotoxy(x,y);
+			printf("%c",0);
+			y-=2;
+			if(y<8)	y=10;
+			gotoxy(x,y);
+			dem--;
+			if(dem<1)		dem=2;
+		printf("%c",16);
+		}
+		if(nhap==13){
+			if(dem==1){
+				system("cls");
+				oneplayer();
+			}
+			else{
+				system("cls");
+				twoplayer();
+			}
+		}
+	}
+}
+//=================================================================================================================================================================
+void howtoplay()
+{
+	gotoxy(0,5);
+	SetColor(1);
+	printf(" Each player use 8 keys including: A, S, D, W, Q, E, Z, C to select the position");
+	gotoxy(20,7);
+	printf(" Use F button to get the covered position ");
+	gotoxy(20,9);
+	printf(" Use R button to get out of that position");
+	gotoxy(35,11);
+	printf(" Have fun !!!");
+	gotoxy(35,13);
+	SetColor(14);
+	printf("1. Main Screen");
+	SetColor(12);
+	gotoxy(35,15);
+	printf("   2. Quit");
+	char nhap;
+	int dem=1;
+	int x=33,y=13;
+	gotoxy(x,y);
+	printf("%c",16);
+	while(true){
+		nhap=getch();
+		if(nhap==80){
+			gotoxy(x,y);
+			printf("%c",0);
+			y+=2;
+			if(y>15)	y=13;
+			gotoxy(x,y);
+			dem++;
+			if(dem>2)	dem=1;
+		printf("%c",16);
+		}
+		else if(nhap==72){
+			gotoxy(x,y);
+			printf("%c",0);
+			y-=2;
+			if(y<13)	y=15;
+			gotoxy(x,y);
+			dem--;
+			if(dem<1)		dem=2;
+		printf("%c",16);
+		}
+		if(nhap==13){
+			if(dem==1){
+				system("cls");
+				mainscreen();
+			}
+			else	exit(0);
+		}
+	}
+}
+//=================================================================================================================================================================
+void main()
+{
+	mainscreen();
+}

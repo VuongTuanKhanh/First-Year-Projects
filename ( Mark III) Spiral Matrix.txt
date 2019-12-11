@@ -1,0 +1,72 @@
+#include<iostream.h>
+int n,t;
+int A[100][100];
+void main()
+{
+	cout<<"Moi nhap n: ";
+	cin>>n;
+	t=1;
+	if(n%2==0){
+		int x=0;
+		int k=n;
+		while(t<n*n){
+			for(int j=x;j<k;j++){
+				A[x][j]=t;
+				t++;
+			}
+			for(int i=x+1;i<k;i++){
+				A[i][k-1]=t;
+				t++;
+			}
+			for(int z=k-2;z>=x;z--){
+				A[k-1][z]=t;
+				t++;
+			}
+			for(int y=k-2;y>=x+1;y--){
+				A[y][x]=t;
+				t++;
+			}
+			x++;
+			k--;
+		}
+	}
+	else{
+		int x=0;
+		int k=n;
+		while(t<n*n){
+			for(int j=x;j<k;j++){
+				A[x][j]=t;
+				t++;
+			}
+			for(int i=x+1;i<k;i++){
+				A[i][k-1]=t;
+				t++;
+			}
+			for(int z=k-2;z>=x;z--){
+				A[k-1][z]=t;
+				t++;
+			}
+			for(int y=k-2;y>=x+1;y--){
+				A[y][x]=t;
+				t++;
+			}
+			x++;
+			k--;
+		}
+		for(int i=0;i<n;i++)
+			for(int j=0;j<n;j++)
+				if(A[i][j]==0)
+					A[i][j]=t;
+				}
+	for(int i=0;i<n;i++){
+		for(int j=0;j<n;j++){
+			if(A[i][j]>=100 && A[i][j]<=999)
+				cout<<"  "<<A[i][j]<<" ";
+			else if(A[i][j]>=10 && A[i][j]<=99)
+				cout<<"  "<<A[i][j]<<"  ";
+			else
+				cout<<"   "<<A[i][j]<<"  ";
+		}
+		cout<<endl;
+	}
+}

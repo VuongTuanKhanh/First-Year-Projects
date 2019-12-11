@@ -1,0 +1,237 @@
+#include<iostream.h>
+#include<ctime>
+#include<cstdlib>
+const int size=10;
+const int MINE=100;
+const int flat=-1;
+int A[size][size],B[size][size],sobom;
+void gioithieu();
+void huongdan();
+void begin();
+void genemtyboard();
+void genmine();
+void genedge();
+int mi_count(int row,int col);
+void gennum(int A[][size]);
+void gameplay();
+void gioithieu()
+{
+	system("color a");
+	cout<<" Developed by DEV-C Archius Vuong"<<endl;
+	cout<<" Press 1 to get back to the main screen"<<endl;
+	cout<<" Press any key to exit"<<endl;
+	int nhap;
+	cin>>nhap;
+	if(nhap==1){
+		system("cls");
+		begin();
+	}
+	else{
+		system("cls");
+		exit(0);
+	}
+}
+void huongdan()
+{
+	system("color a");
+	cout<<" 1. The row and column must be within 1-9"<<endl;
+	cout<<" 2. If you hit the Bomb (X), game over"<<endl;
+	cout<<endl;
+	cout<<" Press 1 to get back to the main screen"<<endl;
+	cout<<" Press any key to exit"<<endl;
+	int nhap;
+	cin>>nhap;
+	if(nhap==1){
+		system("cls");
+		begin();
+	}
+	else{
+		system("cls");
+		exit(0);
+	}
+}
+void begin()
+{
+	system("color a");
+	cout<<" Welcome to the MINESWEEPER "<<endl;
+	cout<<"    1. Introduce"<<endl;
+	cout<<"    2. New Game"<<endl;
+	cout<<"    3. How to play"<<endl;
+	cout<<"    4. Exit"<<endl;
+	int nhap;
+	cin>>nhap;
+	while(nhap<1|| nhap>4){
+		cout<<"Moi nhap lai: ";
+		cin>>nhap;
+	}
+	if(nhap==1){
+		system("cls");
+		gioithieu();
+	}
+	else if(nhap==3){
+		system("cls");
+		huongdan();
+	}
+	else if(nhap==4){
+		system("cls");
+		exit(0);
+	}
+	else{
+		system("cls");
+		gameplay();
+	}
+}
+void genemtyboard()
+{
+	for(int i=0;i<size;i++)
+		for(int j=0;j<size;j++){
+			A[i][j]=0;
+			B[i][j]=-1;
+		}
+}
+void genmine()
+{
+	int dem=0;
+	srand(time(NULL));
+	while(dem<sobom){
+		int a=rand()%(size-2)+1;
+		int b=rand()%(size-2)+1;
+		if(A[a][b]!=MINE){
+			A[a][b]=MINE;
+			dem++;
+		}
+	}
+}
+int mi_count(int row,int col)
+{
+	int count=0;
+	for(int i=-1;i<2;i++)
+		for(int j=-1;j<2;j++)
+			if(A[row+i][col+j]==MINE)
+				count++;
+	return count++;
+}
+void gennum(int A[][size])
+{
+	for(int i=1;i<size-1;i++)
+		for(int j=1;j<size-1;j++)
+			if(A[i][j]!=MINE)
+				A[i][j]=mi_count(i,j);
+}
+void printboard(int A[][size])
+{
+	system("cls");
+	system("color a");
+	for(int i=0;i<size-1;i++){
+		for(int j=0;j<size-1;j++){
+			if(A[i][j]==flat)
+				cout<<"-"<<"  ";
+			else if(A[i][j]==MINE){
+				system("color c");
+				cout<<"X"<<"  ";
+			}
+			else
+				cout<<A[i][j]<<"  ";
+		}
+		cout<<endl;
+	}
+}
+void genedge()
+{
+	int k=0;
+	for(int i=0;i<size;i++){
+		B[0][i]=k;
+		B[i][0]=k;
+		k++;
+	}
+}
+void gameplay()
+{
+	system("color a");
+	genemtyboard();
+	genedge();
+	cout<<" Moi chon muc do"<<endl;
+	cout<<"     1. De"<<endl;
+	cout<<"     2. Trung binh"<<endl;
+	cout<<"     3. Kho"<<endl;
+	int level;
+	cin>>level;
+	while(level<1||level>3){
+		cout<<"Moi nhap lai";
+		cin>>level;
+	}
+
+	if(level==1){
+		system("color a");
+		sobom=5;
+		cout<<" Ban chon muc do de"<<endl;
+		printboard(B);
+		cout<<" So bom la: "<<sobom<<endl;
+		cout<<"=========================="<<endl;
+	}
+	else if(sobom==2){
+		system("color a");
+		sobom=10;
+		printboard(B);
+		cout<<" Ban chon muc do de"<<endl;
+		cout<<" So bom la: "<<sobom<<endl;
+		cout<<"=========================="<<endl;
+	}
+	else{
+		system("color a");
+		sobom=20;
+		printboard(B);
+		cout<<" Ban chon muc do de"<<endl;
+		cout<<" So bom la: "<<sobom<<endl;
+		cout<<"=========================="<<endl;
+	}
+
+	genmine();
+	gennum(A);
+
+	int x,y;
+	int tinh=1;
+	while(tinh!=0){
+		system("color a");
+		cout<<" Row Number: ";
+		cin>>x;
+		while(x<0||x>size-2){
+			system("color a");
+			cout<<" Khong hop le, moi chon lai: ";
+			cin>>x;
+		}
+		cout<<" Column Number: ";
+		cin>>y;
+		while(y<0||y>size-2){
+			cout<<" Khong hop le, moi chon lai: ";
+			cin>>y;
+		}
+		if(A[x][y]!=MINE){
+			system("color a");
+			B[x][y]=A[x][y];
+			printboard(B);
+		}
+		else{
+			system("color a");
+			printboard(A);
+			cout<<"========================"<<endl;
+			cout<<"Game Over !!!"<<endl;
+			int nhap;
+			cout<<"Press 1 to get back to the main screen"<<endl;
+			cout<<"Press any key to exit"<<endl;
+			cin>>nhap;
+			if(nhap==1){
+				system("cls");
+				begin();
+			}
+			else
+				exit(0);
+		}
+		tinh++;
+		cout<<"=========================="<<endl;
+	}
+}
+void main()
+{
+	begin();
+}

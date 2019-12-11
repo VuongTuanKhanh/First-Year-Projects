@@ -1,0 +1,811 @@
+#include<iostream.h>
+#include<ctime>
+#include<cstdlib>
+#include <windows.h>
+#include<conio.h>
+#include<stdio.h>
+#include<stdlib.h>
+//=================================================================================================================================================================
+const int size=4;
+const int BLANK=0;
+int k,status=0;
+int t=size-1;
+int A[size][size],boardcheck[size][size],highscore,i,j;
+#define input "highscore.txt"// diem cao
+#define input1 "status.txt" // tinh trang game
+#define input2 "gameboard.txt" // bang game
+//=================================================================================================================================================================
+void introduce();
+void mainscreen();
+void howtoplay();
+void newgame();
+//=================================================================================================================================================================
+void mainscreen();
+void introduce();
+void howtoplay();
+void newgame();
+//=================================================================================================================================================================
+BOOL NT_SetConsoleDisplayMode(HANDLE hOutputHandle, DWORD dwNewMode)//Full screen
+{
+    typedef BOOL (WINAPI *SCDMProc_t) (HANDLE, DWORD, LPDWORD);
+    SCDMProc_t SetConsoleDisplayMode;
+    HMODULE hKernel32;
+    BOOL bFreeLib = FALSE, ret;
+    const char KERNEL32_NAME[] = "kernel32.dll";
+    hKernel32 = GetModuleHandleA(KERNEL32_NAME);
+    if (hKernel32==NULL)
+    {
+        hKernel32=LoadLibraryA(KERNEL32_NAME);
+        if (hKernel32==NULL)
+            return FALSE;
+ 
+        bFreeLib=true;
+    }
+ 
+    SetConsoleDisplayMode = (SCDMProc_t)GetProcAddress(hKernel32, "SetConsoleDisplayMode");
+    if (SetConsoleDisplayMode == NULL)
+    {
+        SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
+        ret = FALSE;
+    }
+    else
+    {
+        DWORD tmp;
+        ret = SetConsoleDisplayMode(hOutputHandle, dwNewMode, &tmp);
+    }
+    if (bFreeLib)
+        FreeLibrary(hKernel32);
+ 
+    return ret;
+}
+//=============================================================================================================================================================
+void SetFullScreen()
+{
+    NT_SetConsoleDisplayMode( GetStdHandle( STD_OUTPUT_HANDLE ), 1 );
+}
+//=============================================================================================================================================================
+void SetColor(WORD color)
+{
+    HANDLE hConsoleOutput;
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+ 
+    CONSOLE_SCREEN_BUFFER_INFO screen_buffer_info;
+    GetConsoleScreenBufferInfo(hConsoleOutput, &screen_buffer_info);
+ 
+    WORD wAttributes = screen_buffer_info.wAttributes;
+    color &= 0x000f;
+    wAttributes &= 0xfff0;
+    wAttributes |= color;
+ 
+    SetConsoleTextAttribute(hConsoleOutput, wAttributes);
+}
+//=============================================================================================================================================================
+void gotoxy(int x,int y)
+{
+    HANDLE hConsoleOutput;
+    COORD Cursor_an_Pos = { x,y};
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(hConsoleOutput , Cursor_an_Pos);
+}
+//=============================================================================================================================================================
+void SetScreenColor(WORD color)
+{
+    HANDLE hConsoleOutput;
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+ 
+    CONSOLE_SCREEN_BUFFER_INFO screen_buffer_info;
+    GetConsoleScreenBufferInfo(hConsoleOutput, &screen_buffer_info);
+ 
+    WORD wAttributes = screen_buffer_info.wAttributes;
+    color &= 0x000f;
+    color <<= 4;
+    wAttributes &= 0xff0f;
+    wAttributes |= color;
+ 
+    SetConsoleTextAttribute(hConsoleOutput, wAttributes);
+}
+//============================================================================================================================================================
+void ShowCur(bool CursorVisibility)
+{
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursor = {1, CursorVisibility};
+    SetConsoleCursorInfo(handle, &cursor);
+}
+//=================================================================================================================================================================
+void draw(int m,int n)
+{
+	SetColor(0);
+	int i;
+	printf("%c",218);
+	for(i=0;i<n;i++)
+		printf("%c%c%c%c",196,196,196,194);
+	printf("%c%c%c",196,196,196);
+	printf("%c",191);
+	cout<<endl;
+	for(i=0;i<m;i++){
+		for(int j=0;j<n+2;j++)
+			printf("%c   ",179);
+		printf("\n%c",195);
+		for(j=0;j<n;j++)
+			printf("%c%c%c%c",196,196,196,197);
+		printf("%c%c%c",196,196,196);
+		printf("%c\n",180);
+	}
+	for(int j=0;j<n+2;j++)
+		printf("%c   ",179);
+	printf("\n%c",192);
+	for(i=0;i<n;i++)
+		printf("%c%c%c%c",196,196,196,193);
+	printf("%c%c%c",196,196,196);
+	printf("%c",217);
+}
+//=============================================================================================================================================================
+void mainscreen()
+{
+	SetFullScreen();
+	SetScreenColor(8);
+	system("cls");
+	ShowCur(false);
+	cout<<"   222222222222222         000000000            444444444       888888888     "<<endl; Sleep(50);
+	cout<<"  2:::::::::::::::22     00:::::::::00         4::::::::4     88:::::::::88   "<<endl; Sleep(50);
+	cout<<"  2::::::222222:::::2  00:::::::::::::00      4:::::::::4   88:::::::::::::88 "<<endl; Sleep(50);
+	cout<<"  2222222     2:::::2 0:::::::000:::::::0    4::::44::::4  8::::::88888::::::8"<<endl; Sleep(50);
+	cout<<"              2:::::2 0::::::0   0::::::0   4::::4 4::::4  8:::::8     8:::::8"<<endl; Sleep(50);
+	cout<<"              2:::::2 0:::::0     0:::::0  4::::4  4::::4  8:::::8     8:::::8"<<endl; Sleep(50);
+	cout<<"           2222::::2  0:::::0     0:::::0 4::::4   4::::4   8:::::88888:::::8 "<<endl; Sleep(50);
+	cout<<"      22222::::::22   0:::::0 000 0:::::04::::444444::::444  8:::::::::::::8  "<<endl; Sleep(50);
+	cout<<"    22::::::::222     0:::::0 000 0:::::04::::::::::::::::4 8:::::88888:::::8 "<<endl; Sleep(50);
+	cout<<"   2:::::22222        0:::::0     0:::::04444444444:::::4448:::::8     8:::::8"<<endl; Sleep(50);
+	cout<<"  2:::::2             0:::::0     0:::::0          4::::4  8:::::8     8:::::8"<<endl; Sleep(50);
+	cout<<"  2:::::2             0::::::0   0::::::0          4::::4  8:::::8     8:::::8"<<endl; Sleep(50);
+	cout<<"  2:::::2       2222220:::::::000:::::::0          4::::4  8::::::88888::::::8"<<endl; Sleep(50);
+	cout<<"  2::::::2222222:::::2 00:::::::::::::00         44::::::44 88:::::::::::::88 "<<endl; Sleep(50);
+	cout<<"  2::::::::::::::::::2   00:::::::::00           4::::::::4   88:::::::::88   "<<endl; Sleep(50);
+	cout<<"  22222222222222222222     000000000             4444444444     888888888     "<<endl; Sleep(50);
+	gotoxy(35,5);
+	SetColor(10);
+	printf("  Game 2048");
+	SetColor(11);
+	gotoxy(35,7);
+	printf("1. Introduce");
+	SetColor(13);
+	gotoxy(35,9);
+	printf("2. New Game");
+	SetColor(14);
+	gotoxy(35,11);
+	printf("3. How to play");
+	SetColor(12);
+	gotoxy(35,13);
+	printf("4. Quit");
+	int x=30,y=7;
+	gotoxy(x,y);
+	printf("%c",16);
+	char nhap;
+	int dem=1;
+	while(true){
+		nhap=getch();
+		if(nhap==80){
+			gotoxy(x,y);
+			printf("%c",0);
+			y+=2;
+			if(y>13)
+				y=7;
+			gotoxy(x,y);
+			dem++;
+			if(dem>4)
+				dem=1;
+		printf("%c",16);
+		}
+		else if(nhap==72){
+			gotoxy(x,y);
+			printf("%c",0);
+			y-=2;
+			if(y<7)
+				y=13;
+			gotoxy(x,y);
+			dem--;
+			if(dem<1)
+				dem=4;
+		printf("%c",16);
+		}
+		if(nhap==13){
+			if(dem==1){
+				system("cls");
+				introduce();
+			}
+			else if(dem==2){
+				system("cls");
+				newgame();
+			}
+			else if(dem==3){
+				system("cls");
+				howtoplay();
+			}
+			else{
+				system("cls");
+				exit(0);
+			}
+		}
+		if(nhap==27)
+			exit(0);
+	}
+}
+//=============================================================================================================================================================
+void introduce()
+{
+	gotoxy(10,5);
+	SetColor(10);
+	printf(" This program was built and developed by DEV - C Archius Vuong\n");
+	gotoxy(35,7);
+	printf("17110313");
+	gotoxy(36,9);
+	SetColor(14);
+	printf("2048");
+	SetColor(11);
+	gotoxy(31,11);
+	printf("1. Main Screen");
+	SetColor(12);
+	gotoxy(31,13);
+	printf("   2. Quit");
+	char nhap;
+	int dem=1;
+	int x=29,y=11;
+	gotoxy(x,y);
+	printf("%c",16);
+	while(true){
+		nhap=getch();
+		if(nhap==80){
+			gotoxy(x,y);
+			printf("%c",0);
+			y+=2;
+			if(y>13)
+				y=11;
+			gotoxy(x,y);
+			dem++;
+			if(dem>2)
+				dem=1;
+		printf("%c",16);
+		}
+		else if(nhap==72){
+			gotoxy(x,y);
+			printf("%c",0);
+			y-=2;
+			if(y<11)
+				y=13;
+			gotoxy(x,y);
+			dem--;
+			if(dem<1)
+				dem=2;
+		printf("%c",16);
+		}
+		if(nhap==13){
+			if(dem==1){
+				system("cls");
+				mainscreen();
+			}
+			else
+				exit(0);
+		}
+	}
+}
+//=================================================================================================================================================================
+//Movements
+//=================================================================================================================================================================
+void go_down(int A[][size])//di xuong
+{
+	for (int j=0;j<size;j++) {
+		int t=size-1;
+		for (int i = t;i>=0;i--) {
+			if (A[i][j]!= 0) {
+				A[t][j]=A[i][j];
+				t--;
+			}
+		}
+		for (i=t;i>=0;i--) A[i][j]=0;
+	}
+	// Gop các giá tr? trùng nhau
+	for (j=0;j<size;j++) {
+		int t=size-1;
+		for (int i=t;i>=0;i--) {
+			if(A!=0){
+				if (A[i][j]==A[i - 1][j]) {
+					A[t][j]=2 * A[i][j];
+					t--;
+					i--;
+				}
+				else {
+					A[t][j]=A[i][j];
+					t--;
+				}
+			}
+		}
+		for (i=t;i>=0;i--) A[i][j] = 0;
+	}
+
+}
+//====================================
+void go_up(int A[][size])//di len
+{
+	for (int j=0;j<size;j++) {
+		int t=0;
+		for (int i=0;i<size;i++) {
+			if (A[i][j]!=0) {
+				A[t][j]=A[i][j];
+				t++;
+			}
+		}
+		for (i=t;i<size;i++) A[i][j] = 0;
+	}
+	// Gop các giá tr? trùng nhau
+	for (j = 0;j<size;j++) {
+		int t=0;
+		for (int i=0;i<size;i++) {
+			if (A[i][j]!=0) {
+				if (A[i][j]==A[i + 1][j]) {
+					A[t][j]=2 * A[i][j];
+					t++;
+					i++;
+				}
+				else {
+					A[t][j]=A[i][j];
+					t++;
+				}
+			}
+		}
+		for (i=t;i<size;i++) A[i][j] = 0;
+	}
+}
+//====================================
+void go_right(int A[][size])//qua phai
+{
+	for (int i=0;i<size;i++) {
+		int t = size-1;
+		for (int j = size-1;j>=0;j--) {
+			if (A[i][j]!= 0) {
+				A[i][t]=A[i][j];
+				t--;
+			}
+		}
+		for (j=t;j>=0;j--) A[i][j] = 0;
+	}
+	// Gop cac gia tri trùng nhau
+	for (i=0;i<size;i++) {
+		int t=size-1;
+		for (int j=t;j>=0;j--) {
+			if (A[i][j]!=0) {
+				if (A[i][j]==A[i][j - 1]) {
+					A[i][t]=2 * A[i][j];
+					j--;
+					t--;
+				}
+				else {
+					A[i][t]=A[i][j];
+					t--;
+				}
+			}
+		}
+		for (j=t;j>=0;j--) A[i][j] = 0;
+	}
+}
+//====================================
+void go_left(int A[][size])//qua trai
+{
+	for (int i=0;i<size;i++) {
+		int t=0;
+		for (int j=0;j<size;j++) {
+			if (A[i][j]!=0) {
+				A[i][t]=A[i][j];
+				t++;
+			}
+		}
+		for (j=t;j<size;j++) A[i][j] = 0;
+	}
+	// Gop các giá tri trùng nhau
+	for (i = 0; i < size; i++){
+		int t = 0;
+		for (int j = 0;j<size; j++){
+			if (A[i][j] != 0) {
+				if (A[i][j]==A[i][j + 1]) {
+					A[i][t]=2 * A[i][j];
+					j++;
+					t++;
+				}
+				else{
+					A[i][t]=A[i][j];
+					t++;
+				}
+			}
+		}
+		for (j=t;j<size;j++) A[i][j]=0;
+	}
+
+}
+//=================================================================================================================================================================
+//Random
+//=================================================================================================================================================================
+int random()
+{
+	srand(time(NULL));
+	int a=rand()%10;//random tu 0 - 9
+	if (a==4) return 4;	
+	else return 2;
+}
+//=================================================================================================================================================================
+//Generate
+//=================================================================================================================================================================
+void gennum(int A[][size])
+{
+	int i,j;
+	//Kiem tra xem con cho trong hay khong
+	bool freespace=false;
+	for (i=0; i<size; i++){
+		for (j=0; j<4; j++){
+			if (!A[i][j]){
+				freespace=true;
+				break;
+			}
+		}
+	}
+	//Neu con cho thi chon cho trong ngau nhien de khoi tao gia tri
+	if (freespace){
+		do{
+			i = rand()%4;
+			j = rand()%4;
+		}while (A[i][j]);
+		A[i][j] = random();
+	}
+}
+//=================================================================================================================================================================
+void genemtyboard(int A[][size])//tao mang trong
+{
+	for(int i=0;i<size;i++)
+		for(int j=0;j<size;j++){
+			A[i][j]=BLANK;
+		}
+}
+//=================================================================================================================================================================
+//Check Tools
+//=================================================================================================================================================================
+bool freespace()//kiem tra o trong                        
+{
+	bool kq = false;
+	for (int i=0; i<size; i++){
+		for (int j=0; j<size; j++){
+			if (!A[i][j]){
+				kq = true;
+			}
+		}
+	}
+	return kq;
+}
+//=================================================================================================================================================================
+int checkwin(int A[][size])
+{
+	for(int i=0;i<size;i++)
+		for(int j=0;j<size;j++)
+			if(A[i][j]==BLANK)
+				return 1;
+	return 0;
+}
+//=================================================================================================================================================================
+bool checklose()//kiem tra game ket thuc
+{
+	bool kq1, kq2;
+	if (freespace()) {kq1 = true;} //Con o trong thi true
+	for (int i=0; i<3; i++){
+		for (int j=0; j<3; j++){
+			//Con 2 o canh nhau co cung gia tri thi true
+			if (A[i][j]==A[i][j+1] || A[i][j]==A[i+1][j]){
+				kq2 = true;
+			}
+		}
+	}
+	if ((!kq1) && (!kq2)) return true;
+	else return false;
+}
+//=================================================================================================================================================================
+void creCheck()//ghi chep nuoc vua di
+{
+	for (int i=0;i<size;i++) {
+		for (int j=0;j<size;j++){
+			boardcheck[i][j]=A[i][j];
+		}
+	}
+}
+//=================================================================================================================================================================
+bool checkMove()//kiem tra xem con nuoc di khong
+{
+	for (int i=0;i<size;i++) {
+		for (int j=0;j<size;j++) {
+			if (boardcheck[i][j] != A[i][j]) return true;
+		}
+	}
+	return false;
+}
+//=================================================================================================================================================================
+int score(int A[][size])
+{
+	int diem=0;
+	for(int i=0;i<size;i++)
+		for(int j=0;j<size;j++)
+			diem+=A[i][j];
+	return diem;
+}
+//File
+//=================================================================================================================================================================
+void setnum(int n)//ghi diem cao moi
+{
+	FILE *fi = fopen(input,"wt");
+	fprintf(fi,"%d",n);
+	fclose(fi);
+}
+//=================================================================================================================================================================
+void printnum(int &highscore)//ghi diem cao vao file
+{
+	FILE *fo = fopen(input,"rt");
+	fscanf(fo, "%d", &highscore);
+	fclose(fo);
+}
+//=================================================================================================================================================================
+void ghitinhtrang(int &status)//ghi tinh trang game con choi tiep duoc khong
+{
+	FILE *fo = fopen(input1,"wt");
+	fprintf(fo, "%d", status);
+	fclose(fo);
+}
+//=================================================================================================================================================================
+void checkstatus(int &status)//kiem tra tinh trang game
+{
+	FILE *fo = fopen(input1,"rt");
+	fscanf(fo, "%d", &status);
+	fclose(fo);
+}
+//=================================================================================================================================================================
+void readgameboard(int A[][size])//ghi bang game cu ra man hinh
+{
+    int i, j;
+    FILE *fp = NULL;
+    fp = fopen(input2, "rt");
+    for (i=0; i<size; i++){
+        for (j=0; j<size; j++){
+            fread(&A[i][j],sizeof(A[i][j]),1,fp); 
+			printf("%3d",A[i][j]); 
+        }
+    }
+    fclose(fp);
+
+}
+//=================================================================================================================================================================
+void writegameboard(int A[][size])
+{
+	int i,j;
+	FILE *fp=fopen(input2,"wt");
+	for(i=0;i<size;i++){ 
+		for(j=0;j<size;j++) 
+		{
+			fwrite(&A[i][j],sizeof(A[i][j]),1,fp);
+		}
+	}
+    fclose(fp); 
+} 
+//=================================================================================================================================================================
+//Gameplay
+//=================================================================================================================================================================
+void printboard(int A[][size])
+{
+	for(int i=0;i<size;i++){
+		for(int j=0;j<size;j++){
+			int x=2+(j*4);
+			int y=1+(i*2);
+			gotoxy(x,y);
+			if(A[i][j]!=BLANK && A[i][j]<99){
+				if(A[i][j]==2)	SetColor(1);
+				else if(A[i][j]==4)	SetColor(2);
+				else if(A[i][j]==8)	SetColor(3);
+				else if(A[i][j]==16)	SetColor(9);
+				else if(A[i][j]==32)	SetColor(11);
+				else if(A[i][j]==64)	SetColor(12);
+				printf("%d",A[i][j]);
+				SetColor(0);
+			}
+			else if(A[i][j]>100 && A[i][j]<999){
+				if(A[i][j]==128)	SetColor(13);
+				else if(A[i][j]==256)	SetColor(10);
+				x-=1;
+				gotoxy(x,y);
+				printf("%d",A[i][j]);
+				SetColor(0);
+			}
+			else if(A[i][j]>1000 && A[i][j]<9999){
+				if(A[i][j]==512)	SetColor(14);
+				else if(A[i][j]==1024)	SetColor(10);
+				else if(A[i][j]==2048)	SetColor(11);
+				x-=2;
+				gotoxy(x,y);
+				printf("%d",A[i][j]);
+			}
+			else if(A[i][j]==BLANK)
+				printf(" ");
+		}
+	}
+	gotoxy(0,9);
+	cout<<"Best Score: "<<highscore<<endl;
+	gotoxy(22,9);
+	cout<<"Score: "<<score(A)<<endl;
+	cout<<"--------------------------------"<<endl;
+	cout<<"- 'Up' button to go up"<<endl;
+	cout<<"- 'Down' button to go down"<<endl;
+	cout<<"- 'Right' button to turn right"<<endl;
+	cout<<"- 'Left' button to turn left"<<endl;
+	cout<<"- 'ESC' button to exit"<<endl;
+	cout<<"- 'R' button to replay"<<endl;
+	cout<<"---------------0o0--------------"<<endl;
+}
+//=================================================================================================================================================================
+void newgame()
+{
+	system("cls");
+	SetFullScreen();
+	SetScreenColor(7);
+	SetColor(0);
+	checkstatus(status);
+	if(status==0){
+		system("color 11");
+		genemtyboard(A);
+		gennum(A);
+		printnum(highscore);
+		while(!checklose()){
+			gotoxy(0,0);
+			draw(3,3);
+			status=1;
+			printboard(A);
+			printnum(highscore);
+			int z=score(A);
+			if(z>highscore){
+				setnum(z);
+				continue;
+			}
+			char nhap;
+			nhap=getch();
+			creCheck();
+			while(nhap!=80 && nhap!=75 && nhap !=77 && nhap!=72 && nhap!=27 && nhap!=114 && nhap !=82)	nhap=getch();
+			if(nhap==27)	exit(0);
+			else if(nhap==75)	go_left(A);
+			else if(nhap==80)	go_down(A);
+			else if(nhap==77)		go_right(A);
+			else if(nhap==82 || nhap==114)	newgame();
+			else	go_up(A);
+			writegameboard(A);
+			if(checkwin(A)==0){
+				status=0;
+				system("cls");
+				system("color c");
+				cout<<"Game Over !!!"<<endl;
+				cout<<"-----------------------"<<endl;
+				cout<<"Press 1 to go back to the main screen"<<endl;
+				cout<<"    Press any key to exit"<<endl;
+				char k;
+				ghitinhtrang(status);
+				k=getch();
+				if(k=='1')	mainscreen();
+				else	exit(0);
+			}
+			if (checkMove() == false) continue;
+			gennum(A);
+			ghitinhtrang(status);
+		}
+	}
+//=============================================================================================
+	else{
+		system("color 11");
+		readgameboard(A);
+		gennum(A);
+		printnum(highscore);
+		system("cls");
+		while(!checklose()){
+			gotoxy(0,0);
+			draw(3,3);
+			status=1;
+			printboard(A);
+			printnum(highscore);
+			int z=score(A);
+			if(z>highscore){
+				setnum(z);
+				continue;
+			}
+			char nhap;
+			nhap=getch();
+			creCheck();
+			while(nhap!=80 && nhap!=75 && nhap !=77 && nhap!=72 && nhap!=27 && nhap!=114 && nhap !=82)	nhap=getch();
+			if(nhap==27)	exit(0);
+			else if(nhap==75)	go_left(A);
+			else if(nhap==80)	go_down(A);
+			else if(nhap==77)	go_right(A);
+			else if(nhap==82 || nhap==114){
+				status=0;
+				ghitinhtrang(status);
+				newgame();
+				
+			}
+			else	go_up(A);
+			writegameboard(A);
+			if(checkwin(A)==0){
+				system("cls");
+				status=0;
+				system("cls");
+				system("color c");
+				cout<<"Game Over !!!"<<endl;
+				cout<<"-----------------------"<<endl;
+				cout<<"Press 1 to go back to the main screen"<<endl;
+				cout<<"    Press any key to exit"<<endl;
+				ghitinhtrang(status);
+				char k;
+				k=getch();
+				if(k=='1')	mainscreen();
+				else	exit(0);
+			}
+			if (checkMove() == false) continue;
+			gennum(A);
+			ghitinhtrang(status);
+		}
+	}
+}
+//=================================================================================================================================================================
+void howtoplay()
+{
+	gotoxy(20,5);
+	SetColor(10);
+	printf(" Use 4 arrow keys to go Left, Up, Right, Down");
+	gotoxy(32,7);
+	printf("  Press ESC to exit ");
+	gotoxy(27,9);
+	printf("  Press R to start a new game");
+	gotoxy(35,11);
+	printf(" Have fun !!!");
+	gotoxy(35,13);
+	SetColor(14);
+	printf("1. Main Screen");
+	SetColor(12);
+	gotoxy(35,15);
+	printf("   2. Quit");
+	char nhap;
+	int dem=1;
+	int x=33,y=13;
+	gotoxy(x,y);
+	printf("%c",16);
+	while(true){
+		nhap=getch();
+		if(nhap==80){
+			gotoxy(x,y);
+			printf("%c",0);
+			y+=2;
+			if(y>15)	y=13;
+			gotoxy(x,y);
+			dem++;
+			if(dem>2)	dem=1;
+		printf("%c",16);
+		}
+		else if(nhap==72){
+			gotoxy(x,y);
+			printf("%c",0);
+			y-=2;
+			if(y<13)	y=15;
+			gotoxy(x,y);
+			dem--;
+			if(dem<1)		dem=2;
+		printf("%c",16);
+		}
+		if(nhap==13){
+			if(dem==1){
+				system("cls");
+				mainscreen();
+			}
+			else	exit(0);
+		}
+	}
+}
+//=============================================================================================================================================================
+void main()
+{
+	mainscreen();
+}

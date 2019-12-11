@@ -1,0 +1,76 @@
+#include<iostream.h>
+#include<stdio.h>
+#include<stdlib.h>
+#define output "ketqua.txt"
+#define input "vidu.txt"
+const int SIZE=1000000;
+int A[SIZE], B[SIZE], n, max1, a, max;
+void nhap(int A[], int &n);
+int tinh(int B[],int A[]);
+int tong(int B[], int n);
+void xuat(int max);
+void main()
+{
+	nhap(A,n);
+	tinh(B,A);
+	tinh(B,A);
+	tinh(B,A);
+	tinh(B,A);
+	tinh(B,A);
+	tinh(B,A);
+	tong(B,n);
+	xuat(max);
+}
+void nhap(int A[], int &n)
+{
+	FILE *fi = fopen(input,"rt");
+	if(fi!=NULL && n>=5)
+	{
+		fscanf(fi,"%d",&n);
+		for(int i=0;i<n;i++)
+			fscanf(fi,"%d",&A[i]);
+		fclose(fi);
+	}
+	else{
+		cout<<"Khong tim duoc file"<<endl;
+	}
+}
+int tinh(int B[], int A[])
+{
+	a=0;
+	max1=A[0];
+	for(int i=0;i<n;i++){
+		if(max1<A[i]){
+			a=i;
+			max1=A[i];
+		}
+	}
+	B[a] = max1;
+	A[a] = NULL;
+	return B[a], A[a];
+}
+int tong(int B[], int n)
+{
+	max=B[0]+B[2]+B[4];
+	for (int i=0;i<n-4;i++)
+	{
+		for (int j=i+2;j<n-2;j++)
+		{
+			for (int k=j+2;k<n;k++)
+			{
+				int m=B[i]+B[j]+B[k];
+				if (m>max && B[i]!=NULL && B[j]!=NULL && B[k]!=NULL)
+					max=m;
+			}
+		}
+	}
+	return max;
+}
+void xuat(int max)
+{
+	FILE *fo=fopen(output,"wt");
+	if(fo!=NULL){
+		fprintf(fo,"%d",max);
+	}
+	exit(0);
+}
